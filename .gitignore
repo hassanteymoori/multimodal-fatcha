@@ -1,2 +1,6 @@
 .DS_Store
 .idea
+.pyenv
+__pycache__/
+vs
+.vscode
