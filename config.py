@@ -1,18 +1,13 @@
 # _________________________ Face config ______________________________ #
 import cv2
-face = {
-    'rectangle_color': (255, 0, 0),
-    'rectangle_thickness': 1,
 
-    'circle_color': (0, 255, 0),
-    'circle_radius': 2,
-    'circle_thickness': -1,
+hand = {
+    'rectangle_color': (200, 200, 200),
+    'rectangle_thickness': 2,
 
-    'landmark_text': '.',
-    'landmark_font': cv2.FONT_HERSHEY_SIMPLEX,
-    'landmark_fontScale': 0.5,
-    'landmark_text_color' : (255, 255, 255),
-    'landmark_text_thickness' : 1
-
+    'font': cv2.FONT_HERSHEY_PLAIN,
+    'font_scale': 2,
+    'font_color': (200, 200, 200),
+    'font_thickness': 2
 
 }

@@ -1,6 +1,6 @@
 import mediapipe as mp
 import cv2
-
+import config
 
 class HandLandmark:
     def __init__(self, model_complexity=0, min_tracking_confidence=0.7, min_detection_confidence=0.7):
@@ -57,8 +57,19 @@ class HandLandmark:
         box_width, box_height = x_max - x_min, y_max - y_min
         bbox = x_min, y_min, box_width, box_height
 
-        cv2.rectangle(frame, (bbox[0] - 20, bbox[1] - 20),
-                      (bbox[0] + bbox[2] + 20, bbox[1] + bbox[3] + 20),
-                      (255, 0, 255), 2)
-        cv2.putText(frame, hand_type, (bbox[0] - 30, bbox[1] - 30), cv2.FONT_HERSHEY_PLAIN,
-                    2, (255, 0, 255), 2)
+        cv2.rectangle(
+            frame,
+            (bbox[0] - 20, bbox[1] - 20),
+            (bbox[0] + bbox[2] + 20, bbox[1] + bbox[3] + 20),
+            config.hand['rectangle_color'],
+            config.hand['rectangle_thickness']
+        )
+        cv2.putText(
+            frame,
+            hand_type,
+            (bbox[0] - 30, bbox[1] - 30),
+            config.hand['font'],
+            config.hand['font_scale'],
+            config.hand['font_color'],
+            config.hand['font_thickness']
+        )
