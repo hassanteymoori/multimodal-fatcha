@@ -24,5 +24,7 @@ hand = {
 }
 
 gesture = {
-    'logging' : os.path.join(root_dir, 'modules/gesture' , 'key_points.csv')
+    'logging': os.path.join(root_dir, 'modules/gesture', 'key_points.csv'),
+    'model_location': os.path.join(root_dir, 'modules/gesture/key_points_classifier.tflite'),
+    'gestures_label': os.path.join(root_dir, 'modules/gesture/key_points_label.csv')
 }

@@ -41,7 +41,8 @@ class HandLandmark:
                     self._draw_rectangle(frame, hand_landmarks.landmark, hand_type.classification[0].label)
         if landmarks:
             return frame, results
-        return frame
+        else:
+            return frame, []
 
     @staticmethod
     def _draw_rectangle(frame, landmarks, hand_type):
@@ -78,3 +79,4 @@ class HandLandmark:
             config.hand['font_color'],
             config.hand['font_thickness']
         )
+
