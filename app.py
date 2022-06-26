@@ -1,10 +1,12 @@
-from modules.face_detection import FaceDetection
-from modules.hand_landmarks import HandLandmark
 import cv2
+import config
+from modules.hand_landmarks import HandLandmark
+from modules.face_detection import FaceDetection
 
+cap = cv2.VideoCapture(1)  # To use a video file as input: cv2.VideoCapture('filename.mp4')
+cap.set(3, config.camera['width'])
+cap.set(4, config.camera['height'])
 
-# To capture video from webcam.
-cap = cv2.VideoCapture(0)  # To use a video file as input: cv2.VideoCapture('filename.mp4')
 face_detection = FaceDetection()
 hand_landmarks = HandLandmark()
 
