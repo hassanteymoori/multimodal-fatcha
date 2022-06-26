@@ -2,6 +2,7 @@ import mediapipe as mp
 import cv2
 import config
 
+
 class HandLandmark:
     def __init__(self, model_complexity=0, min_tracking_confidence=0.7, min_detection_confidence=0.7):
         self.model_complexity = model_complexity
@@ -16,7 +17,10 @@ class HandLandmark:
             min_detection_confidence=self.min_detection_confidence
         )
 
-    def detect(self, frame, draw_bbox=False):
+    def detect_with_landmarks(self, frame):
+        return self.detect(frame, False, landmarks=True)
+
+    def detect(self, frame, draw_bbox=False, landmarks=False):
         frame.flags.writeable = False
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         results = self.hands.process(frame)
@@ -35,7 +39,8 @@ class HandLandmark:
 
                 if draw_bbox:
                     self._draw_rectangle(frame, hand_landmarks.landmark, hand_type.classification[0].label)
-
+        if landmarks:
+            return frame, results
         return frame
 
     @staticmethod

@@ -1,4 +1,8 @@
 import cv2
+from logging import root
+import os
+
+root_dir = os.path.dirname(__file__)
 
 # _________________________ camera config ______________________________ #
 
@@ -17,4 +21,8 @@ hand = {
     'font_scale': 2,
     'font_color': (200, 0, 200),
     'font_thickness': 2
+}
+
+gesture = {
+    'logging' : os.path.join(root_dir, 'modules/gesture' , 'key_points.csv')
 }

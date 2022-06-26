@@ -13,6 +13,7 @@ hand_landmarks = HandLandmark()
 while cap.isOpened():
     # Read the frame
     success, frame = cap.read()
+
     if not success:
         print("Ignoring empty camera frame.")
         # If loading a video, use 'break' instead of 'continue'.
