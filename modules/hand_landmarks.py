@@ -2,8 +2,8 @@ import mediapipe as mp
 import cv2
 
 
-class HandLandmarks:
-    def __init__(self, model_complexity=0, min_tracking_confidence=0.5, min_detection_confidence=0.5):
+class HandLandmark:
+    def __init__(self, model_complexity=0, min_tracking_confidence=0.7, min_detection_confidence=0.7):
         self.model_complexity = model_complexity
         self.min_tracking_confidence = min_tracking_confidence
         self.min_detection_confidence = min_detection_confidence

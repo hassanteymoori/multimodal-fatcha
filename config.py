@@ -4,7 +4,7 @@ face = {
     'rectangle_color': (255, 0, 0),
     'rectangle_thickness': 1,
 
-    'landmarks_color': (0, 255, 0),
+    'circle_color': (0, 255, 0),
     'circle_radius': 2,
     'circle_thickness': -1,
 
