@@ -1,6 +1,8 @@
 import numpy as np
 import tensorflow as tf
 import config
+import cv2
+import csv
 from ..gesture.key_points_logging import CSVLogging
 
 
@@ -10,12 +12,15 @@ class KeyPointClassifier(object):
             model_location=config.gesture['model_location'],
             num_threads=1,
     ):
-        self.interpreter = tf.lite.Interpreter(model_path=model_location,
-                                               num_threads=num_threads)
-
+        self.interpreter = tf.lite.Interpreter(model_path=model_location, num_threads=num_threads)
         self.interpreter.allocate_tensors()
         self.input_details = self.interpreter.get_input_details()
         self.output_details = self.interpreter.get_output_details()
+        with open(config.gesture['gestures_label'], encoding='utf-8-sig') as f:
+            keypoint_classifier_labels = csv.reader(f)
+            self.keypoint_classifier_labels = [
+                row[0] for row in keypoint_classifier_labels
+            ]
 
     @staticmethod
     def pre_processing(frame, landmarks):
@@ -39,8 +44,22 @@ class KeyPointClassifier(object):
 
         result = self.interpreter.get_tensor(output_details_tensor_index)
         maximum = max(np.squeeze(result) * 100)
-        if maximum <= 50:
-            return 9
+        if maximum <= 60:
+            return 9, maximum
         result_index = np.argmax(np.squeeze(result))
 
-        return result_index
+        return result_index, maximum
+
+    def show_on_screen(self, hand_face_detected_frame, results):
+        if results.multi_hand_landmarks is not None:
+            for h_landmarks in results.multi_hand_landmarks:
+                class_id, maximum = self.__call__(hand_face_detected_frame, h_landmarks)
+                cv2.putText(
+                    hand_face_detected_frame,
+                    "Finger Gesture: " + self.keypoint_classifier_labels[class_id] + '  : ' + str(int(maximum)) + ' %',
+                    (10, 60),
+                    cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0),
+                    4,
+                    cv2.LINE_AA
+                )
+        return hand_face_detected_frame
