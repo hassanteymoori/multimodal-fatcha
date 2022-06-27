@@ -5,8 +5,6 @@ from modules.face_detection import FaceDetection
 from modules.gesture.keypoint_classifier import KeyPointClassifier
 
 cap = cv2.VideoCapture(0)  # To use a video file as input: cv2.VideoCapture('filename.mp4')
-cap.set(3, config.camera['width'])
-cap.set(4, config.camera['height'])
 
 face_detection = FaceDetection()
 hand_landmarks = HandLandmark()
@@ -15,7 +13,8 @@ key_points_classifier = KeyPointClassifier()
 while cap.isOpened():
     # Read the frame
     success, frame = cap.read()
-
+    frame = cv2.resize(frame, None, fx=1.5, fy=1.5, interpolation=cv2.INTER_CUBIC)
+    frame_height, frame_width = frame.shape[:2]
     if not success:
         print("Ignoring empty camera frame.")
         # If loading a video, use 'break' instead of 'continue'.
