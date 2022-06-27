@@ -1,0 +1,4 @@
+cv2
+mediapipe
+speech_recognition
+pydub
