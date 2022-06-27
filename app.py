@@ -3,7 +3,6 @@ import config
 from modules.hand_landmarks import HandLandmark
 from modules.face_detection import FaceDetection
 from modules.gesture.keypoint_classifier import KeyPointClassifier
-from modules.gesture.key_points_logging import CSVLogging
 
 import csv
 
@@ -34,11 +33,7 @@ while cap.isOpened():
 
     if results.multi_hand_landmarks is not None:
         for h_landmarks in results.multi_hand_landmarks:
-            class_id = key_points_classifier(
-                CSVLogging.pre_process_landmark(
-                    CSVLogging.landmark_list(hand_face_detected_frame, h_landmarks)
-                )
-            )
+            class_id = key_points_classifier(hand_face_detected_frame, h_landmarks)
             cv2.putText(
                 hand_face_detected_frame,
                 "Finger Gesture:" + keypoint_classifier_labels[class_id],

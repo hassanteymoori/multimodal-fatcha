@@ -1,14 +1,14 @@
 import numpy as np
 import tensorflow as tf
-
 import config
+from ..gesture.key_points_logging import CSVLogging
 
 
 class KeyPointClassifier(object):
     def __init__(
-        self,
-        model_location=config.gesture['model_location'],
-        num_threads=1,
+            self,
+            model_location=config.gesture['model_location'],
+            num_threads=1,
     ):
         self.interpreter = tf.lite.Interpreter(model_path=model_location,
                                                num_threads=num_threads)
@@ -17,10 +17,18 @@ class KeyPointClassifier(object):
         self.input_details = self.interpreter.get_input_details()
         self.output_details = self.interpreter.get_output_details()
 
+    @staticmethod
+    def pre_processing(frame, landmarks):
+        return CSVLogging.pre_process_landmark(
+            CSVLogging.landmark_list(frame, landmarks)
+        )
+
     def __call__(
-        self,
-        landmark_list,
+            self,
+            hand_face_detected_frame,
+            landmark_list_original,
     ):
+        landmark_list = self.pre_processing(hand_face_detected_frame, landmark_list_original)
         input_details_tensor_index = self.input_details[0]['index']
         self.interpreter.set_tensor(
             input_details_tensor_index,
