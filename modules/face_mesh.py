@@ -107,11 +107,11 @@ class FaceMesh:
                 cv2.putText(
                     frame,
                     "Pose: " + pose_text,
-                    (10, 120),
+                    (10, 30),
                     cv2.FONT_HERSHEY_SIMPLEX,
-                    1.0,
+                    0.75,
                     (0, 0, 0),
-                    3,
+                    2,
                     cv2.LINE_AA
                 )
                 self._draw_landmarks(frame, face_landmarks)

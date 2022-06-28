@@ -60,9 +60,9 @@ class KeyPointClassifier(object):
                     "Finger Gesture: " + self.keypoint_classifier_labels[gesture_class_id] + "  : " + str(int(maximum)) + " %",
                     (10, 60),
                     cv2.FONT_HERSHEY_SIMPLEX,
-                    1.0,
+                    0.75,
                     (0, 0, 0),
-                    3,
+                    2,
                     cv2.LINE_AA
                 )
         return hand_face_detected_frame, gesture_class_id

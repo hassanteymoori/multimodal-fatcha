@@ -9,10 +9,10 @@ emoji_directory = os.path.join(root_dir, "modules/anti_spoofing/challenge/emoji"
 hand = {
     "rectangle_color": (200, 0, 200),
     "rectangle_thickness": 2,
-    "font": cv2.FONT_HERSHEY_PLAIN,
-    "font_scale": 2,
+    "font": cv2.FONT_HERSHEY_SIMPLEX,
+    "font_scale": 0.75,
     "font_color": (200, 0, 200),
-    "font_thickness": 2
+    "font_thickness": 1
 }
 
 gesture = {

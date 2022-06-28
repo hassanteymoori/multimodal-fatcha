@@ -26,16 +26,16 @@ timer = config.challenge['time_per_question']
 total_result_for_each_question = []
 challenge_result = 'Failed'
 challenge_text = ['' for i in range(number_of_question)]
-height = 200
+height = 150
 
 
-def show_image(img, text, color=(255, 255, 255), height=200):
+def show_image(img, text, color=(0, 0, 0), height=150):
     cv2.putText(
         img,
         text,
         (10, height),
-        cv2.FONT_HERSHEY_COMPLEX,
-        1,
+        cv2.FONT_HERSHEY_SIMPLEX,
+        0.75,
         color,
         2)
     return img
@@ -63,7 +63,9 @@ while cap.isOpened():
         hand_face_detected_frame,
         results
     )
-    show_image(hand_face_gesture_frame, starter_text, height=50)
+
+    cv2.line(hand_face_gesture_frame, (10, 80), (500, 80), color=(168, 144, 34), thickness=1)
+    show_image(hand_face_gesture_frame, starter_text, color=(176, 119, 49),  height=110)
     interaction_data = {
         "head_pose_class": head_pose_class,
         "hand_class_label": hand_class_label,
@@ -98,11 +100,12 @@ while cap.isOpened():
             total_result_for_each_question = []
 
     for index, text in enumerate(challenge_text):
-        height = 200 + index * 30
-        show_image(hand_face_gesture_frame, text, height=height)
-    if challenge_result == 'Passed':
-        show_image(hand_face_gesture_frame, color=(0, 255, 0) , text='Challenge Successful', height=height + 50)
+        height = 150 + index * 30
 
-    cv2.imshow("img", hand_face_gesture_frame)
+        show_image(hand_face_gesture_frame, text, color=(150, 47, 140), height=height)
+    if challenge_result == 'Passed':
+        show_image(hand_face_gesture_frame, color=(0, 255, 0), text='Challenge Successful', height=height + 50)
+
+    cv2.imshow("img", cv2.resize(hand_face_gesture_frame, None, fx=1.5, fy=1.5, interpolation=cv2.INTER_CUBIC))
 
 cap.release()
