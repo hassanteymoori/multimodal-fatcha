@@ -89,14 +89,19 @@ class FaceMesh:
                 # See where the user"s head tilting
                 if y < -10:
                     pose_text = config.head_pose[1]
+                    head_pose_class = 1
                 elif y > 10:
                     pose_text = config.head_pose[2]
+                    head_pose_class = 2
                 elif x < -10:
                     pose_text = config.head_pose[3]
+                    head_pose_class = 3
                 elif x > 10:
                     pose_text = config.head_pose[4]
+                    head_pose_class = 4
                 else:
                     pose_text = config.head_pose[5]
+                    head_pose_class = 5
 
                 # Add the pose_text on the image
                 cv2.putText(
