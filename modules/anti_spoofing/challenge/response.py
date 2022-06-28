@@ -47,7 +47,7 @@ class ChallengeResponse:
     def _challenge_like_with_right(self, interaction_date):
         if self._is_gesture_unknown(interaction_date['gesture_class_id']):
             return False
-        if interaction_date['gesture_class_id'] == 0 and interaction_date['hand_class_label'] == 'Right':
+        if interaction_date['gesture_class_id'] == 0 and self._challenge_right_hand(interaction_date):
             return True
         else:
             return False
@@ -55,7 +55,7 @@ class ChallengeResponse:
     def _challenge_like_with_left(self, interaction_date):
         if self._is_gesture_unknown(interaction_date['gesture_class_id']):
             return False
-        if interaction_date['gesture_class_id'] == 0 and interaction_date['hand_class_label'] == 'Left':
+        if interaction_date['gesture_class_id'] == 0 and self._challenge_left_land(interaction_date):
             return True
         else:
             return False
@@ -63,7 +63,7 @@ class ChallengeResponse:
     def _challenge_dislike_with_right(self, interaction_date):
         if self._is_gesture_unknown(interaction_date['gesture_class_id']):
             return False
-        if interaction_date['gesture_class_id'] == 1 and interaction_date['hand_class_label'] == 'Right':
+        if interaction_date['gesture_class_id'] == 1 and self._challenge_right_hand(interaction_date):
             return True
         else:
             return False
@@ -71,7 +71,7 @@ class ChallengeResponse:
     def _challenge_dislike_with_left(self, interaction_date):
         if self._is_gesture_unknown(interaction_date['gesture_class_id']):
             return False
-        if interaction_date['gesture_class_id'] == 1 and interaction_date['hand_class_label'] == 'Left':
+        if interaction_date['gesture_class_id'] == 1 and self._challenge_left_land(interaction_date):
             return True
         else:
             return False
@@ -79,7 +79,7 @@ class ChallengeResponse:
     def _challenge_callme_with_right(self, interaction_date):
         if self._is_gesture_unknown(interaction_date['gesture_class_id']):
             return False
-        if interaction_date['gesture_class_id'] == 2 and interaction_date['hand_class_label'] == 'Right':
+        if interaction_date['gesture_class_id'] == 2 and self._challenge_right_hand(interaction_date):
             return True
         else:
             return False
@@ -87,7 +87,7 @@ class ChallengeResponse:
     def _challenge_callme_with_left(self, interaction_date):
         if self._is_gesture_unknown(interaction_date['gesture_class_id']):
             return False
-        if interaction_date['gesture_class_id'] == 2 and interaction_date['hand_class_label'] == 'Left':
+        if interaction_date['gesture_class_id'] == 2 and self._challenge_left_land(interaction_date):
             return True
         else:
             return False
@@ -95,7 +95,7 @@ class ChallengeResponse:
     def _challenge_number_four_with_right(self, interaction_date):
         if self._is_gesture_unknown(interaction_date['gesture_class_id']):
             return False
-        if interaction_date['gesture_class_id'] == 3 and interaction_date['hand_class_label'] == 'Right':
+        if interaction_date['gesture_class_id'] == 3 and self._challenge_right_hand(interaction_date):
             return True
         else:
             return False
@@ -103,7 +103,7 @@ class ChallengeResponse:
     def _challenge_number_four_with_left(self, interaction_date):
         if self._is_gesture_unknown(interaction_date['gesture_class_id']):
             return False
-        if interaction_date['gesture_class_id'] == 3 and interaction_date['hand_class_label'] == 'Left':
+        if interaction_date['gesture_class_id'] == 3 and self._challenge_left_land(interaction_date):
             return True
         else:
             return False
@@ -111,7 +111,7 @@ class ChallengeResponse:
     def _challenge_hi_five_with_right(self, interaction_date):
         if self._is_gesture_unknown(interaction_date['gesture_class_id']):
             return False
-        if interaction_date['gesture_class_id'] == 4 and interaction_date['hand_class_label'] == 'Right':
+        if interaction_date['gesture_class_id'] == 4 and self._challenge_right_hand(interaction_date):
             return True
         else:
             return False
@@ -119,7 +119,7 @@ class ChallengeResponse:
     def _challenge_hi_five_with_left(self, interaction_date):
         if self._is_gesture_unknown(interaction_date['gesture_class_id']):
             return False
-        if interaction_date['gesture_class_id'] == 4 and interaction_date['hand_class_label'] == 'Left':
+        if interaction_date['gesture_class_id'] == 4 and self._challenge_left_land(interaction_date):
             return True
         else:
             return False
@@ -127,7 +127,7 @@ class ChallengeResponse:
     def _challenge_victory_with_right(self, interaction_date):
         if self._is_gesture_unknown(interaction_date['gesture_class_id']):
             return False
-        if interaction_date['gesture_class_id'] == 5 and interaction_date['hand_class_label'] == 'Right':
+        if interaction_date['gesture_class_id'] == 5 and self._challenge_right_hand(interaction_date):
             return True
         else:
             return False
@@ -135,7 +135,7 @@ class ChallengeResponse:
     def _challenge_victory_with_left(self, interaction_date):
         if self._is_gesture_unknown(interaction_date['gesture_class_id']):
             return False
-        if interaction_date['gesture_class_id'] == 5 and interaction_date['hand_class_label'] == 'Left':
+        if interaction_date['gesture_class_id'] == 5 and self._challenge_left_land(interaction_date):
             return True
         else:
             return False
@@ -143,7 +143,7 @@ class ChallengeResponse:
     def _challenge_perfect_with_right(self, interaction_date):
         if self._is_gesture_unknown(interaction_date['gesture_class_id']):
             return False
-        if interaction_date['gesture_class_id'] == 6 and interaction_date['hand_class_label'] == 'Right':
+        if interaction_date['gesture_class_id'] == 6 and self._challenge_right_hand(interaction_date):
             return True
         else:
             return False
@@ -151,7 +151,7 @@ class ChallengeResponse:
     def _challenge_perfect_with_left(self, interaction_date):
         if self._is_gesture_unknown(interaction_date['gesture_class_id']):
             return False
-        if interaction_date['gesture_class_id'] == 6 and interaction_date['hand_class_label'] == 'Left':
+        if interaction_date['gesture_class_id'] == 6 and self._challenge_left_land(interaction_date):
             return True
         else:
             return False
@@ -159,7 +159,7 @@ class ChallengeResponse:
     def _challenge_crossed_with_right(self, interaction_date):
         if self._is_gesture_unknown(interaction_date['gesture_class_id']):
             return False
-        if interaction_date['gesture_class_id'] == 7 and interaction_date['hand_class_label'] == 'Right':
+        if interaction_date['gesture_class_id'] == 7 and self._challenge_right_hand(interaction_date):
             return True
         else:
             return False
@@ -167,7 +167,7 @@ class ChallengeResponse:
     def _challenge_crossed_with_left(self, interaction_date):
         if self._is_gesture_unknown(interaction_date['gesture_class_id']):
             return False
-        if interaction_date['gesture_class_id'] == 7 and interaction_date['hand_class_label'] == 'Left':
+        if interaction_date['gesture_class_id'] == 7 and self._challenge_left_land(interaction_date):
             return True
         else:
             return False
@@ -175,7 +175,7 @@ class ChallengeResponse:
     def _challenge_omg_with_right(self, interaction_date):
         if self._is_gesture_unknown(interaction_date['gesture_class_id']):
             return False
-        if interaction_date['gesture_class_id'] == 8 and interaction_date['hand_class_label'] == 'Right':
+        if interaction_date['gesture_class_id'] == 8 and self._challenge_right_hand(interaction_date):
             return True
         else:
             return False
@@ -183,7 +183,7 @@ class ChallengeResponse:
     def _challenge_omg_with_left(self, interaction_date):
         if self._is_gesture_unknown(interaction_date['gesture_class_id']):
             return False
-        if interaction_date['gesture_class_id'] == 8 and interaction_date['hand_class_label'] == 'Left':
+        if interaction_date['gesture_class_id'] == 8 and self._challenge_left_land(interaction_date):
             return True
         else:
             return False
