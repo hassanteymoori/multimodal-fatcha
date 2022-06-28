@@ -12,6 +12,7 @@ class HandLandmark:
         self.mp_drawing_styles = mp.solutions.drawing_styles
         self.mp_hands = mp.solutions.hands
         self.hands = self.mp_hands.Hands(
+            max_num_hands=1,
             model_complexity=self.model_complexity,
             min_tracking_confidence=self.min_tracking_confidence,
             min_detection_confidence=self.min_detection_confidence
@@ -27,9 +28,10 @@ class HandLandmark:
 
         frame.flags.writeable = True
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-
+        hand_class_label = 'Unknown'
         if results.multi_hand_landmarks:
             for hand_type, hand_landmarks in zip(results.multi_handedness, results.multi_hand_landmarks):
+                hand_class_label = hand_type.classification[0].label
                 self.mp_drawing.draw_landmarks(
                     frame,
                     hand_landmarks,
@@ -40,9 +42,9 @@ class HandLandmark:
                 if draw_bbox:
                     self._draw_rectangle(frame, hand_landmarks.landmark, hand_type.classification[0].label)
         if landmarks:
-            return frame, results
+            return frame, results, hand_class_label
         else:
-            return frame, []
+            return frame, [], hand_class_label
 
     @staticmethod
     def _draw_rectangle(frame, landmarks, hand_type):
