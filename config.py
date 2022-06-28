@@ -28,3 +28,13 @@ gesture = {
     'model_location': os.path.join(root_dir, 'modules/gesture/key_points_classifier.tflite'),
     'gestures_label': os.path.join(root_dir, 'modules/gesture/key_points_label.csv')
 }
+
+face = {
+    'nose_tip' : 1,
+    'corner_right_lip': 61,
+    'corner_left_lip': 291,
+    'corner_right_eye': 33,
+    'corner_left_eye': 263,
+    'chin': 199,
+    'special_points_join': [1, 61, 291, 33,263, 199]
+}

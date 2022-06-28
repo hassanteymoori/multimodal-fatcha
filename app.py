@@ -12,14 +12,14 @@ key_points_classifier = KeyPointClassifier()
 while cap.isOpened():
     # Read the frame
     success, frame = cap.read()
-    frame = cv2.resize(frame, None, fx=1.5, fy=1.5, interpolation=cv2.INTER_CUBIC)
-    frame_height, frame_width = frame.shape[:2]
+    # frame = cv2.resize(frame, None, fx=1.5, fy=1.5, interpolation=cv2.INTER_CUBIC)
+    # frame_height, frame_width = frame.shape[:2]
     if not success:
         print("Ignoring empty camera frame.")
         # If loading a video, use 'break' instead of 'continue'.
         continue
 
-    face_detected_frame = face_mesh.detect(cv2.flip(frame, 1))
+    face_detected_frame = face_mesh.detect(cv2.flip(frame, 1), True)
     hand_face_detected_frame, results = hand_landmarks.detect(face_detected_frame, True, landmarks=True)
     hand_face_gesture_frame = key_points_classifier.show_on_screen(hand_face_detected_frame, results)
 
