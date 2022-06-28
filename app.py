@@ -104,7 +104,7 @@ while cap.isOpened():
 
         show_image(hand_face_gesture_frame, text, color=(150, 47, 140), height=height)
     if challenge_result == 'Passed':
-        show_image(hand_face_gesture_frame, color=(0, 255, 0), text='Challenge Successful', height=height + 50)
+        show_image(hand_face_gesture_frame, color=(0, 255, 0), text='Access Granted Successfully', height=height + 50)
 
     cv2.imshow("img", cv2.resize(hand_face_gesture_frame, None, fx=1.5, fy=1.5, interpolation=cv2.INTER_CUBIC))
 
