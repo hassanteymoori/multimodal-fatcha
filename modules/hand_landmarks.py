@@ -28,7 +28,7 @@ class HandLandmark:
 
         frame.flags.writeable = True
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-        hand_class_label = 'Unknown'
+        hand_class_label = "Unknown"
         if results.multi_hand_landmarks:
             for hand_type, hand_landmarks in zip(results.multi_handedness, results.multi_hand_landmarks):
                 hand_class_label = hand_type.classification[0].label
@@ -69,16 +69,16 @@ class HandLandmark:
             frame,
             (bbox[0] - 20, bbox[1] - 20),
             (bbox[0] + bbox[2] + 20, bbox[1] + bbox[3] + 20),
-            config.hand['rectangle_color'],
-            config.hand['rectangle_thickness']
+            config.hand["rectangle_color"],
+            config.hand["rectangle_thickness"]
         )
         cv2.putText(
             frame,
             hand_type,
             (bbox[0] - 30, bbox[1] - 30),
-            config.hand['font'],
-            config.hand['font_scale'],
-            config.hand['font_color'],
-            config.hand['font_thickness']
+            config.hand["font"],
+            config.hand["font_scale"],
+            config.hand["font_color"],
+            config.hand["font_thickness"]
         )
 

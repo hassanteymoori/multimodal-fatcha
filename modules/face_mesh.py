@@ -45,7 +45,7 @@ class FaceMesh:
         if results.multi_face_landmarks:
             for face_landmarks in results.multi_face_landmarks:
                 for landmark_index, landmark in enumerate(face_landmarks.landmark):
-                    if landmark_index in config.face['special_points_join']:
+                    if landmark_index in config.face["special_points_join"]:
 
                         x, y = int(landmark.x * frame_width), int(landmark.y * frame_height)
 
@@ -86,7 +86,7 @@ class FaceMesh:
                 x = angles[0] * 360
                 y = angles[1] * 360
 
-                # See where the user's head tilting
+                # See where the user"s head tilting
                 if y < -10:
                     pose_text = config.head_pose[1]
                 elif y > 10:
