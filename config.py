@@ -38,3 +38,11 @@ face = {
     'chin': 199,
     'special_points_join': [1, 61, 291, 33,263, 199]
 }
+
+head_pose = {
+    1: 'You are looking left',
+    2: 'You are looking right',
+    3: 'You are looking down',
+    4: 'You are looking up',
+    5: 'You are looking forward',
+}

@@ -51,12 +51,13 @@ class KeyPointClassifier(object):
         return result_index, maximum
 
     def show_on_screen(self, hand_face_detected_frame, results):
+        gesture_class_id = -1
         if results.multi_hand_landmarks is not None:
             for h_landmarks in results.multi_hand_landmarks:
-                class_id, maximum = self.__call__(hand_face_detected_frame, h_landmarks)
+                gesture_class_id, maximum = self.__call__(hand_face_detected_frame, h_landmarks)
                 cv2.putText(
                     hand_face_detected_frame,
-                    "Finger Gesture: " + self.keypoint_classifier_labels[class_id] + '  : ' + str(int(maximum)) + ' %',
+                    "Finger Gesture: " + self.keypoint_classifier_labels[gesture_class_id] + '  : ' + str(int(maximum)) + ' %',
                     (10, 60),
                     cv2.FONT_HERSHEY_SIMPLEX,
                     1.0,
@@ -64,4 +65,4 @@ class KeyPointClassifier(object):
                     3,
                     cv2.LINE_AA
                 )
-        return hand_face_detected_frame
+        return hand_face_detected_frame, gesture_class_id
