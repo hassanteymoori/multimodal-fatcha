@@ -1,8 +1,4 @@
 import cv2
-import numpy as np
-import time
-import os
-
 import config
 from modules.hand_landmarks import HandLandmark
 from modules.face_mesh import FaceMesh
@@ -14,19 +10,17 @@ cap = cv2.VideoCapture(0)  # To use a video file as input: cv2.VideoCapture("fil
 face_mesh = FaceMesh()
 hand_landmarks = HandLandmark()
 key_points_classifier = KeyPointClassifier()
-
-flag_start_challenge = False
 challenge = ChallengeResponse()
 questions = challenge.random_questions(config.challenge['number_of_challenges'])
-starter_text = 'press `s` when you were ready to start the challenge'
-number_of_question = len(questions)
-response = np.zeros(number_of_question)
+
+flag_to_start_the_challenge = False
 current_question = 0
-start_time = 0
-timer = config.challenge['time_per_question']
-total_result_for_each_question = []
+n_consecutive_frames = 0
+
+starter_text = 'press `s` when you were ready to start the challenge'
+
 challenge_result = 'Failed'
-challenge_text = ['' for i in range(number_of_question)]
+challenge_text = ['' for i in range(len(questions))]
 height = 150
 
 
@@ -40,6 +34,42 @@ def show_image(img, text, color=(0, 0, 0), height=150):
         color,
         2)
     return img
+
+
+def next_question():
+    global current_question, questions, challenge_result, \
+        flag_to_start_the_challenge, n_consecutive_frames, challenge_text
+
+    if current_question == (len(questions) - 1):
+        challenge_result = 'Passed'
+        flag_to_start_the_challenge = False
+
+    challenge_text[current_question] = f'{question["text"]} :passed!'
+    n_consecutive_frames = 0
+    current_question += 1
+
+    return
+
+
+def next_consecutive(current_question_obj, challenge_current_result):
+    global current_question, n_consecutive_frames, challenge_text
+    if challenge_current_result:
+        challenge_text[current_question] = f'{current_question_obj["text"]} :detected! keep it'
+        n_consecutive_frames += 1
+        if n_consecutive_frames >= config.challenge['consecutive']:
+            next_question()
+    else:
+        n_consecutive_frames = 0
+
+    return
+
+
+def add_icon(frame, path_to_icon):
+    emoji = cv2.imread(path_to_icon)
+    hs, ws, _ = emoji.shape
+    h, w, _ = frame.shape
+    frame[0:hs, w - ws:w] = emoji
+    return frame
 
 
 while cap.isOpened():
@@ -66,7 +96,7 @@ while cap.isOpened():
     )
 
     cv2.line(hand_face_gesture_frame, (10, 80), (500, 80), color=(168, 144, 34), thickness=1)
-    show_image(hand_face_gesture_frame, starter_text, color=(176, 119, 49),  height=110)
+    show_image(hand_face_gesture_frame, starter_text, color=(176, 119, 49), height=110)
     interaction_data = {
         "head_pose_class": head_pose_class,
         "hand_class_label": hand_class_label,
@@ -78,31 +108,16 @@ while cap.isOpened():
     if key == 27:
         break
     if key == 115:  # s --> start challenge response
-        flag_start_challenge = True
+        flag_to_start_the_challenge = True
         starter_text = ''
-        start_time = time.time()
 
-    if flag_start_challenge:
+    if flag_to_start_the_challenge:
         question = questions[current_question]
         challenge_text[current_question] = question['text']
         current_result = challenge.challenge_case(question['id'], interaction_data)
         if question['type'] == 1:
-            emoji = cv2.imread(question['link'])
-            hs, ws, _ = emoji.shape
-            h, w, _ = hand_face_gesture_frame.shape
-            hand_face_gesture_frame[0:hs, w-ws:w] = emoji
-        if current_result:
-            challenge_text[current_question] = f'{question["text"]} :detected! keep it'
-            total_result_for_each_question.append(current_result)
-            if len(total_result_for_each_question) >= config.challenge['consecutive']:
-                if current_question == (number_of_question - 1):
-                    challenge_result = 'Passed'
-                    flag_start_challenge = False
-
-                challenge_text[current_question] = f'{question["text"]} :passed!'
-                current_question += 1
-        else:
-            total_result_for_each_question = []
+            add_icon(hand_face_gesture_frame, question["link"])
+        next_consecutive(question, current_result)
 
     for index, text in enumerate(challenge_text):
         height = 150 + index * 30
