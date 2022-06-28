@@ -2,7 +2,6 @@ import cv2
 import os
 
 root_dir = os.path.dirname(__file__)
-emoji_directory = os.path.join(root_dir, "modules/anti_spoofing/challenge/emoji")
 
 # _________________________ hand config ______________________________ #
 

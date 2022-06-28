@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import time
+import os
 
 import config
 from modules.hand_landmarks import HandLandmark
@@ -85,7 +86,11 @@ while cap.isOpened():
         question = questions[current_question]
         challenge_text[current_question] = question['text']
         current_result = challenge.challenge_case(question['id'], interaction_data)
-        print(current_result)
+        if question['type'] == 1:
+            emoji = cv2.imread(question['link'])
+            hs, ws, _ = emoji.shape
+            h, w, _ = hand_face_gesture_frame.shape
+            hand_face_gesture_frame[0:hs, w-ws:w] = emoji
         if current_result:
             challenge_text[current_question] = f'{question["text"]} :detected! keep it'
             total_result_for_each_question.append(current_result)

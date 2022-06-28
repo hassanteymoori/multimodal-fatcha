@@ -1,5 +1,7 @@
 import os
 import random
+root_dir = os.path.dirname(__file__)
+emoji_directory = os.path.join(root_dir, "emoji")
 
 
 class ChallengeResponse:
@@ -271,109 +273,109 @@ class ChallengeResponse:
                 "id": 8,
                 "type": 1,
                 "text": "Show me `Like` with your RIGHT hand",
-                "link": os.path.join("emoji/like.png")
+                "link": os.path.join(emoji_directory,"like.png")
             },
             {
                 "id": 9,
                 "type": 1,
                 "text": "Show me `Like` with your LEFT hand",
-                "link": os.path.join("emoji/like.png")
+                "link": os.path.join(emoji_directory,"like.png")
             },
             {
                 "id": 10,
                 "type": 1,
                 "text": "Show me `Dislike` with your RIGHT hand",
-                "link": os.path.join("emoji/dislike.png")
+                "link": os.path.join(emoji_directory,"dislike.png")
             },
             {
                 "id": 11,
                 "type": 1,
                 "text": "Show me `Dislike` with your LEFT hand",
-                "link": os.path.join("emoji/dislike.png")
+                "link": os.path.join(emoji_directory,"dislike.png")
             },
             {
                 "id": 12,
                 "type": 1,
                 "text": "Show me `Call me` with your RIGHT hand",
-                "link": os.path.join("emoji/call-me.png")
+                "link": os.path.join(emoji_directory,"call-me.png")
             },
             {
                 "id": 13,
                 "type": 1,
                 "text": "Show me `Call me` with your LEFT hand",
-                "link": os.path.join("emoji/call-me.png")
+                "link": os.path.join(emoji_directory,"call-me.png")
             },
             {
                 "id": 14,
                 "type": 1,
                 "text": "Show me `Four` with your RIGHT hand",
-                "link": os.path.join("emoji/four.png")
+                "link": os.path.join(emoji_directory,"four.png")
             },
             {
                 "id": 15,
                 "type": 1,
                 "text": "Show me `Four` with your LEFT hand",
-                "link": os.path.join("emoji/four.png")
+                "link": os.path.join(emoji_directory,"four.png")
             },
             {
                 "id": 16,
                 "type": 1,
                 "text": "Show me `Hi-five` with your RIGHT hand",
-                "link": os.path.join("emoji/hi_five.png")
+                "link": os.path.join(emoji_directory,"hi_five.png")
             },
             {
                 "id": 17,
                 "type": 1,
                 "text": "Show me `Hi-five` with your LEFT hand",
-                "link": os.path.join("emoji/hi_five.png")
+                "link": os.path.join(emoji_directory,"hi_five.png")
             },
             {
                 "id": 18,
                 "type": 1,
                 "text": "Show me `Victory` with your RIGHT hand",
-                "link": os.path.join("emoji/victory.png")
+                "link": os.path.join(emoji_directory,"victory.png")
             },
             {
                 "id": 19,
                 "type": 1,
                 "text": "Show me `Victory` with your LEFT hand",
-                "link": os.path.join("emoji/victory.png")
+                "link": os.path.join(emoji_directory,"victory.png")
             },
             {
                 "id": 20,
                 "type": 1,
                 "text": "Show me `Perfect` with your RIGHT hand",
-                "link": os.path.join("emoji/perfect.png")
+                "link": os.path.join(emoji_directory,"perfect.png")
             },
             {
                 "id": 21,
                 "type": 1,
                 "text": "Show me `Perfect` with your LEFT hand",
-                "link": os.path.join("emoji/perfect.png")
+                "link": os.path.join(emoji_directory,"perfect.png")
             },
             {
                 "id": 22,
                 "type": 1,
                 "text": "Show me `Finger crossed` with your RIGHT hand",
-                "link": os.path.join("emoji/crossed.png")
+                "link": os.path.join(emoji_directory,"crossed.png")
             },
             {
                 "id": 23,
                 "type": 1,
                 "text": "Show me `Finger crossed` with your LEFT hand",
-                "link": os.path.join("emoji/crossed.png")
+                "link": os.path.join(emoji_directory,"crossed.png")
             },
             {
                 "id": 24,
                 "type": 1,
                 "text": "Show me `Mamma Mia!` with your RIGHT hand",
-                "link": os.path.join("emoji/omg.png")
+                "link": os.path.join(emoji_directory,"omg.png")
             },
             {
                 "id": 25,
                 "type": 1,
                 "text": "Show me `Mamma Mia!` with your LEFT hand",
-                "link": os.path.join("emoji/omg.png")
+                "link": os.path.join(emoji_directory,"omg.png")
             },
 
         ]
