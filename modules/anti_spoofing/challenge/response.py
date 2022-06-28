@@ -9,43 +9,122 @@ class ChallengeResponse:
             Exception('Number of the request sub sample are above the total number of the question')
         return random.sample(questions, number)
 
+    # ________________________ type 0 challenges _______________________ #
     @staticmethod
-    def challenge_right_hand(interaction_date):
+    def _challenge_right_hand(interaction_date):
         return True if interaction_date['hand_class_label'] == 'Right' else False
 
     @staticmethod
-    def challenge_left_land(interaction_date):
+    def _challenge_left_land(interaction_date):
         return True if interaction_date['hand_class_label'] == 'Left' else False
 
     @staticmethod
-    def challenge_head_pose_left(interaction_date):
+    def _challenge_head_pose_left(interaction_date):
         return True if interaction_date['head_pose_class'] == 1 else False
 
     @staticmethod
-    def challenge_head_pose_right(interaction_date):
+    def _challenge_head_pose_right(interaction_date):
         return True if interaction_date['head_pose_class'] == 2 else False
 
     @staticmethod
-    def challenge_head_pose_down(interaction_date):
+    def _challenge_head_pose_down(interaction_date):
         return True if interaction_date['head_pose_class'] == 3 else False
 
     @staticmethod
-    def challenge_head_pose_up(interaction_date):
+    def _challenge_head_pose_up(interaction_date):
         return True if interaction_date['head_pose_class'] == 4 else False
 
     @staticmethod
-    def challenge_head_pose_forward(interaction_date):
+    def _challenge_head_pose_forward(interaction_date):
         return True if interaction_date['head_pose_class'] == 5 else False
+
+    # ________________________ type 1 challenges _______________________ #
+    @staticmethod
+    def _is_gesture_unknown(hand_class):
+        if hand_class == 9:
+            return True
+
+    def _challenge_like_with_right(self, interaction_date):
+        if self._is_gesture_unknown(interaction_date['gesture_class_id']):
+            return False
+        if interaction_date['gesture_class_id'] == 0 and interaction_date['hand_class_label'] == 'Right':
+            return True
+        else:
+            return False
+
+    def _challenge_like_with_left(self, interaction_date):
+        if self._is_gesture_unknown(interaction_date['gesture_class_id']):
+            return False
+        if interaction_date['gesture_class_id'] == 0 and interaction_date['hand_class_label'] == 'Left':
+            return True
+        else:
+            return False
+
+    def _challenge_dislike_with_right(self, interaction_date):
+        if self._is_gesture_unknown(interaction_date['gesture_class_id']):
+            return False
+        if interaction_date['gesture_class_id'] == 1 and interaction_date['hand_class_label'] == 'Right':
+            return True
+        else:
+            return False
+
+    def _challenge_dislike_with_left(self, interaction_date):
+        if self._is_gesture_unknown(interaction_date['gesture_class_id']):
+            return False
+        if interaction_date['gesture_class_id'] == 1 and interaction_date['hand_class_label'] == 'Left':
+            return True
+        else:
+            return False
+
+    def _challenge_callme_with_right(self, interaction_date):
+        if self._is_gesture_unknown(interaction_date['gesture_class_id']):
+            return False
+        if interaction_date['gesture_class_id'] == 2 and interaction_date['hand_class_label'] == 'Right':
+            return True
+        else:
+            return False
+
+    def _challenge_callme_with_left(self, interaction_date):
+        if self._is_gesture_unknown(interaction_date['gesture_class_id']):
+            return False
+        if interaction_date['gesture_class_id'] == 2 and interaction_date['hand_class_label'] == 'Left':
+            return True
+        else:
+            return False
+
+    def _challenge_number_four_with_right(self, interaction_date):
+        if self._is_gesture_unknown(interaction_date['gesture_class_id']):
+            return False
+        if interaction_date['gesture_class_id'] == 3 and interaction_date['hand_class_label'] == 'Right':
+            return True
+        else:
+            return False
+
+    def _challenge_number_four_with_left(self, interaction_date):
+        if self._is_gesture_unknown(interaction_date['gesture_class_id']):
+            return False
+        if interaction_date['gesture_class_id'] == 3 and interaction_date['hand_class_label'] == 'Left':
+            return True
+        else:
+            return False
 
     def challenge_case(self, status, interaction_date):
         match status:
-            case 1: return self.challenge_right_hand(interaction_date)
-            case 2: return self.challenge_left_land(interaction_date)
-            case 3: return self.challenge_head_pose_left(interaction_date)
-            case 4: return self.challenge_head_pose_right(interaction_date)
-            case 5: return self.challenge_head_pose_up(interaction_date)
-            case 6: return self.challenge_head_pose_down(interaction_date)
-            case 7: return self.challenge_head_pose_forward(interaction_date)
+            case 1: return self._challenge_right_hand(interaction_date)
+            case 2: return self._challenge_left_land(interaction_date)
+            case 3: return self._challenge_head_pose_left(interaction_date)
+            case 4: return self._challenge_head_pose_right(interaction_date)
+            case 5: return self._challenge_head_pose_up(interaction_date)
+            case 6: return self._challenge_head_pose_down(interaction_date)
+            case 7: return self._challenge_head_pose_forward(interaction_date)
+            case 8: return self._challenge_like_with_right(interaction_date)
+            case 9: return self._challenge_like_with_right(interaction_date)
+            case 10: return self._challenge_dislike_with_right(interaction_date)
+            case 11: return self._challenge_dislike_with_left(interaction_date)
+            case 12: return self._challenge_callme_with_right(interaction_date)
+            case 13: return self._challenge_callme_with_left(interaction_date)
+            case 14: return self._challenge_number_four_with_right(interaction_date)
+            case 15: return self._challenge_number_four_with_left(interaction_date)
 
     @staticmethod
     def questions():
