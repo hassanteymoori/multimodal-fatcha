@@ -1,11 +1,8 @@
 import cv2
-import config
 from modules.hand_landmarks import HandLandmark
 from modules.gesture.key_points_logging import CSVLogging
 
 cap = cv2.VideoCapture(0)
-cap.set(3, config.camera["width"])
-cap.set(4, config.camera["height"])
 
 hand_landmarks = HandLandmark()
 save_to_csv = CSVLogging()

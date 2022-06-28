@@ -27,10 +27,6 @@ class ChallengeResponse:
         return True if interaction_date['head_pose_class'] == 2 else False
 
     @staticmethod
-    def _challenge_head_pose_down(interaction_date):
-        return True if interaction_date['head_pose_class'] == 3 else False
-
-    @staticmethod
     def _challenge_head_pose_up(interaction_date):
         return True if interaction_date['head_pose_class'] == 4 else False
 
@@ -159,7 +155,7 @@ class ChallengeResponse:
     def _challenge_crossed_with_right(self, interaction_date):
         if self._is_gesture_unknown(interaction_date['gesture_class_id']):
             return False
-        if interaction_date['gesture_class_id'] == 7 and self._challenge_right_hand(interaction_date):
+        if interaction_date['gesture_class_id'] == 8 and self._challenge_right_hand(interaction_date):
             return True
         else:
             return False
@@ -167,7 +163,7 @@ class ChallengeResponse:
     def _challenge_crossed_with_left(self, interaction_date):
         if self._is_gesture_unknown(interaction_date['gesture_class_id']):
             return False
-        if interaction_date['gesture_class_id'] == 7 and self._challenge_left_land(interaction_date):
+        if interaction_date['gesture_class_id'] == 8 and self._challenge_left_land(interaction_date):
             return True
         else:
             return False
@@ -175,7 +171,7 @@ class ChallengeResponse:
     def _challenge_omg_with_right(self, interaction_date):
         if self._is_gesture_unknown(interaction_date['gesture_class_id']):
             return False
-        if interaction_date['gesture_class_id'] == 8 and self._challenge_right_hand(interaction_date):
+        if interaction_date['gesture_class_id'] == 7 and self._challenge_right_hand(interaction_date):
             return True
         else:
             return False
@@ -183,38 +179,62 @@ class ChallengeResponse:
     def _challenge_omg_with_left(self, interaction_date):
         if self._is_gesture_unknown(interaction_date['gesture_class_id']):
             return False
-        if interaction_date['gesture_class_id'] == 8 and self._challenge_left_land(interaction_date):
+        if interaction_date['gesture_class_id'] == 7 and self._challenge_left_land(interaction_date):
             return True
         else:
             return False
 
     def challenge_case(self, status, interaction_date):
         match status:
-            case 1: return self._challenge_right_hand(interaction_date)
-            case 2: return self._challenge_left_land(interaction_date)
-            case 3: return self._challenge_head_pose_left(interaction_date)
-            case 4: return self._challenge_head_pose_right(interaction_date)
-            case 5: return self._challenge_head_pose_up(interaction_date)
-            case 6: return self._challenge_head_pose_down(interaction_date)
-            case 7: return self._challenge_head_pose_forward(interaction_date)
-            case 8: return self._challenge_like_with_right(interaction_date)
-            case 9: return self._challenge_like_with_right(interaction_date)
-            case 10: return self._challenge_dislike_with_right(interaction_date)
-            case 11: return self._challenge_dislike_with_left(interaction_date)
-            case 12: return self._challenge_callme_with_right(interaction_date)
-            case 13: return self._challenge_callme_with_left(interaction_date)
-            case 14: return self._challenge_number_four_with_right(interaction_date)
-            case 15: return self._challenge_number_four_with_left(interaction_date)
-            case 16: return self._challenge_hi_five_with_right(interaction_date)
-            case 17: return self._challenge_hi_five_with_left(interaction_date)
-            case 18: return self._challenge_victory_with_right(interaction_date)
-            case 19: return self._challenge_victory_with_left(interaction_date)
-            case 20: return self._challenge_perfect_with_right(interaction_date)
-            case 21: return self._challenge_perfect_with_right(interaction_date)
-            case 22: return self._challenge_crossed_with_right(interaction_date)
-            case 23: return self._challenge_crossed_with_left(interaction_date)
-            case 24: return self._challenge_omg_with_right(interaction_date)
-            case 25: return self._challenge_omg_with_left(interaction_date)
+            case 1:
+                return self._challenge_right_hand(interaction_date)
+            case 2:
+                return self._challenge_left_land(interaction_date)
+            case 3:
+                return self._challenge_head_pose_left(interaction_date)
+            case 4:
+                return self._challenge_head_pose_right(interaction_date)
+            case 5:
+                return self._challenge_head_pose_up(interaction_date)
+            case 7:
+                return self._challenge_head_pose_forward(interaction_date)
+            case 8:
+                return self._challenge_like_with_right(interaction_date)
+            case 9:
+                return self._challenge_like_with_left(interaction_date)
+            case 10:
+                return self._challenge_dislike_with_right(interaction_date)
+            case 11:
+                return self._challenge_dislike_with_left(interaction_date)
+            case 12:
+                return self._challenge_callme_with_right(interaction_date)
+            case 13:
+                return self._challenge_callme_with_left(interaction_date)
+            case 14:
+                return self._challenge_number_four_with_right(interaction_date)
+            case 15:
+                return self._challenge_number_four_with_left(interaction_date)
+            case 16:
+                return self._challenge_hi_five_with_right(interaction_date)
+            case 17:
+                return self._challenge_hi_five_with_left(interaction_date)
+            case 18:
+                return self._challenge_victory_with_right(interaction_date)
+            case 19:
+                return self._challenge_victory_with_left(interaction_date)
+            case 20:
+                return self._challenge_perfect_with_right(interaction_date)
+            case 21:
+                return self._challenge_perfect_with_left(interaction_date)
+            case 22:
+                return self._challenge_crossed_with_right(interaction_date)
+            case 23:
+                return self._challenge_crossed_with_left(interaction_date)
+            case 24:
+                return self._challenge_omg_with_right(interaction_date)
+            case 25:
+                return self._challenge_omg_with_left(interaction_date)
+            case _: return False
 
     @staticmethod
     def questions():
@@ -240,11 +260,9 @@ class ChallengeResponse:
             {
                 "id": 5,
                 "type": 0,
-                "text": "Turn your head UP"},
-            {
-                "id": 6,
-                "type": 0,
-                "text": "Turn your head DOWN"},
+                "text": "Turn your head UP"
+            },
+
             {
                 "id": 7,
                 "type": 0,

@@ -16,8 +16,9 @@ key_points_classifier = KeyPointClassifier()
 
 flag_start_challenge = False
 challenge = ChallengeResponse()
-questions = challenge.random_questions(10)
-number_of_question = len(challenge.random_questions())
+questions = challenge.random_questions(config.challenge['number_of_challenges'])
+starter_text = 'press `s` when you were ready to start the challenge'
+number_of_question = len(questions)
 response = np.zeros(number_of_question)
 current_question = 0
 start_time = 0
@@ -25,6 +26,7 @@ timer = config.challenge['time_per_question']
 total_result_for_each_question = []
 challenge_result = 'Failed'
 challenge_text = ['' for i in range(number_of_question)]
+height = 200
 
 
 def show_image(img, text, color=(255, 255, 255), height=200):
@@ -61,7 +63,7 @@ while cap.isOpened():
         hand_face_detected_frame,
         results
     )
-    show_image(hand_face_gesture_frame, 'press `s` when you were ready to start the challenge', height=10)
+    show_image(hand_face_gesture_frame, starter_text, height=50)
     interaction_data = {
         "head_pose_class": head_pose_class,
         "hand_class_label": hand_class_label,
@@ -74,12 +76,14 @@ while cap.isOpened():
         break
     if key == 115:  # s --> start challenge response
         flag_start_challenge = True
+        starter_text = ''
         start_time = time.time()
 
     if flag_start_challenge:
         question = questions[current_question]
         challenge_text[current_question] = question['text']
-        current_result = challenge.challenge_result(question, interaction_data)
+        current_result = challenge.challenge_case(question['id'], interaction_data)
+        print(current_result)
         if current_result:
             challenge_text[current_question] = f'{question["text"]} :detected! keep it'
             total_result_for_each_question.append(current_result)
@@ -96,6 +100,9 @@ while cap.isOpened():
     for index, text in enumerate(challenge_text):
         height = 200 + index * 30
         show_image(hand_face_gesture_frame, text, height=height)
+    if challenge_result == 'Passed':
+        show_image(hand_face_gesture_frame, color=(0, 255, 0) , text='Challenge Successful', height=height + 50)
+
     cv2.imshow("img", hand_face_gesture_frame)
 
 cap.release()
