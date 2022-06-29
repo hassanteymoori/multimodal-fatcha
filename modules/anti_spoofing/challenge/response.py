@@ -5,11 +5,21 @@ emoji_directory = os.path.join(root_dir, "emoji")
 
 
 class ChallengeResponse:
-    def random_questions(self, number):
-        questions = self.questions()
+
+    def __init__(self, number_of_questions=10):
+        self.challenge_started = False
+        self.current_question = 0
+        self.number_of_questions=number_of_questions
+        self.questions = self._random_questions(number_of_questions)
+
+    def _random_questions(self, number):
+        questions = self._questions()
         if number > len(questions):
             Exception('Number of the request sub sample are above the total number of the question')
         return random.sample(questions, number)
+
+    def sample_again(self):
+        self.questions = self._random_questions(self.number_of_questions)
 
     # ________________________ type 0 challenges _______________________ #
     @staticmethod
@@ -239,7 +249,7 @@ class ChallengeResponse:
             case _: return False
 
     @staticmethod
-    def questions():
+    def _questions():
         return [
             {
                 "id": 1,
