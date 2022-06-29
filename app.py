@@ -19,12 +19,13 @@ current_question = 0
 n_consecutive_frames = 0
 challenge_text = ['' for i in range(len(questions))]
 challenge_result = False
-
-base_location_height = 150
+total_attempt = 0
+base_location_height = 170
 
 current_time = 0
 time_per_question = 0
 timer_blinking = True
+
 
 def reset_time_per_question():
     global time_per_question, current_time
@@ -41,7 +42,7 @@ def start_challenge():
     n_consecutive_frames = 0
     challenge_result = False
     challenge_text = ['' for i in range(len(questions))]
-    base_location_height = 150
+    base_location_height = 180
     reset_time_per_question()
 
 
@@ -56,8 +57,6 @@ def add_text_to_frame(given_frame, given_text, given_location=(10, 150), given_c
         thickness=2
     )
 
-    return given_frame
-
 
 def next_question():
     global current_question, questions, challenge_result, \
@@ -71,6 +70,7 @@ def next_question():
     n_consecutive_frames = 0
     current_question += 1
 
+    reset_time_per_question()
     return
 
 
@@ -95,12 +95,27 @@ def add_icon(to_frame, path_to_icon):
     return to_frame
 
 
+def challenge_failed():
+    global current_question, questions, challenge_result, \
+        flag_to_start_the_challenge, n_consecutive_frames, challenge_text, \
+        base_location_height,total_attempt
+
+    questions = challenge.random_questions(config.challenge['number_of_challenges'])
+    current_question = 0
+    n_consecutive_frames = 0
+    challenge_text = ['' for i in range(len(questions))]
+    challenge_result = False
+    base_location_height = 180
+    reset_time_per_question()
+    total_attempt += 1
+
+
 def add_timer(to_frame):
     global current_time, time_per_question, timer_blinking
     timer = int(time_per_question - time.time())
     if timer >= 0:
         rec_width, rec_height = 220, 55
-        x1, y1 = int(hand_face_gesture_frame.shape[1]//2) - int(rec_width/2), 0
+        x1, y1 = int(to_frame.shape[1] // 2) - int(rec_width / 2), 0
         if timer < (config.challenge['time_per_question'] // 2):
             timer_blinking = not timer_blinking
         if timer_blinking:
@@ -117,7 +132,9 @@ def add_timer(to_frame):
                 # given_color=(3, 186, 252),
                 given_color=(230, 230, 230),
                 font_scale=1.1,
-        )
+            )
+    else:
+        challenge_failed()
 
 
 while cap.isOpened():
@@ -143,12 +160,12 @@ while cap.isOpened():
         results
     )
 
-    cv2.line(hand_face_gesture_frame, (10, 80), (500, 80), color=(168, 144, 34), thickness=1)
+    cv2.line(hand_face_gesture_frame, (10, 110), (500, 110), color=(168, 144, 34), thickness=2)
     if not flag_to_start_the_challenge and not challenge_result:
         add_text_to_frame(
             given_frame=hand_face_gesture_frame,
             given_text='PRESS `s` to start the challenge',
-            given_location=(10, 110),
+            given_location=(10, 140),
             given_color=(176, 119, 49)
         )
     interaction_data = {
@@ -164,7 +181,7 @@ while cap.isOpened():
     if key == 115:  # s --> start challenge response
         start_challenge()
 
-    if flag_to_start_the_challenge:
+    if flag_to_start_the_challenge and total_attempt != config.challenge['allowed_attempt']:
         question = questions[current_question]
         add_timer(hand_face_gesture_frame)
         challenge_text[current_question] = question['text']
@@ -173,21 +190,41 @@ while cap.isOpened():
             add_icon(hand_face_gesture_frame, question["link"])
         next_consecutive(question, current_result)
 
-    for index, text in enumerate(challenge_text):
-        base_location_height = 150 + index * 30
-        add_text_to_frame(
-            given_frame=hand_face_gesture_frame,
-            given_text=text,
-            given_location=(10, base_location_height),
-            given_color=(150, 47, 140)
-        )
+        for index, text in enumerate(challenge_text):
+            base_location_height = 180 + index * 30
+            add_text_to_frame(
+                given_frame=hand_face_gesture_frame,
+                given_text=text,
+                given_location=(10, base_location_height),
+                given_color=(150, 47, 140)
+            )
     if challenge_result:
-        cv2.line(hand_face_gesture_frame, (10, base_location_height + 25), (500, base_location_height + 25), color=(0, 255, 0), thickness=1)
+        cv2.line(hand_face_gesture_frame, (10, base_location_height + 25), (500, base_location_height + 25),
+                 color=(0, 255, 0), thickness=1)
         add_text_to_frame(
             given_frame=hand_face_gesture_frame,
             given_text='Access Granted Successfully',
             given_location=(10, base_location_height + 50),
             given_color=(0, 255, 0)
+        )
+    if total_attempt != 0 and (total_attempt < config.challenge['allowed_attempt']):
+        desc = 'Total attempt:  ' + str(total_attempt)
+        desc += '| You can try ' + str(config.challenge["allowed_attempt"] - total_attempt) + ' more times'
+        add_text_to_frame(
+            given_frame=hand_face_gesture_frame,
+            given_text=desc,
+            given_location=(10, 90),
+            given_color=(0, 0, 255)
+        )
+
+    if not challenge_result and total_attempt == config.challenge['allowed_attempt']:
+        cv2.line(hand_face_gesture_frame, (10, base_location_height + 25), (500, base_location_height + 25),
+                 color=(0, 0, 255), thickness=2)
+        add_text_to_frame(
+            given_frame=hand_face_gesture_frame,
+            given_text='Access Denied',
+            given_location=(10, base_location_height + 50),
+            given_color=(0, 0, 255)
         )
 
     cv2.imshow("img", cv2.resize(hand_face_gesture_frame, None, fx=1.5, fy=1.5, interpolation=cv2.INTER_CUBIC))
