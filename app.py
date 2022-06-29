@@ -13,10 +13,6 @@ hand_landmarks = HandLandmark()
 key_points_classifier = KeyPointClassifier()
 challenge = ChallengeResponse(config.challenge['number_of_challenges'])
 
-n_consecutive_frames = 0
-challenge_text = ['' for i in range(challenge.number_of_questions)]
-challenge_result = False
-total_attempt = 0
 base_location_height = 170
 
 current_time = 0
@@ -31,14 +27,13 @@ def reset_time_per_question():
 
 
 def start_challenge():
-    global challenge_result, \
-        challenge, n_consecutive_frames, challenge_text, \
+    global challenge, \
         base_location_height, current_time, time_per_question
     challenge.challenge_started = True
     challenge.current_question = 0
-    n_consecutive_frames = 0
-    challenge_result = False
-    challenge_text = ['' for i in range(challenge.number_of_questions)]
+    challenge.n_consecutive_frames = 0
+    challenge.challenge_result = False
+    challenge.challenge_text = ['' for i in range(challenge.number_of_questions)]
     base_location_height = 180
     reset_time_per_question()
 
@@ -56,15 +51,14 @@ def add_text_to_frame(given_frame, given_text, given_location=(10, 150), given_c
 
 
 def next_question():
-    global challenge_result, \
-        challenge, n_consecutive_frames, challenge_text
+    global  challenge
 
     if challenge.current_question == (challenge.number_of_questions - 1):
-        challenge_result = True
+        challenge.challenge_result = True
         challenge.challenge_started = False
 
-    challenge_text[challenge.current_question] = f'{question["text"]} :passed!'
-    n_consecutive_frames = 0
+    challenge.challenge_text[challenge.current_question] = f'{question["text"]} :passed!'
+    challenge.n_consecutive_frames = 0
     challenge.current_question += 1
 
     reset_time_per_question()
@@ -72,14 +66,14 @@ def next_question():
 
 
 def next_consecutive(current_question_obj, challenge_current_result):
-    global challenge, n_consecutive_frames, challenge_text
+    global challenge
     if challenge_current_result:
-        challenge_text[challenge.current_question] = f'{current_question_obj["text"]} :detected! keep it'
-        n_consecutive_frames += 1
-        if n_consecutive_frames >= config.challenge['consecutive']:
+        challenge.challenge_text[challenge.current_question] = f'{current_question_obj["text"]} :detected! keep it'
+        challenge.n_consecutive_frames += 1
+        if challenge.n_consecutive_frames >= config.challenge['consecutive']:
             next_question()
     else:
-        n_consecutive_frames = 0
+        challenge.n_consecutive_frames = 0
 
     return
 
@@ -93,18 +87,17 @@ def add_icon(to_frame, path_to_icon):
 
 
 def challenge_failed():
-    global challenge_result, \
-        challenge, n_consecutive_frames, challenge_text, \
-        base_location_height,total_attempt
+    global challenge, \
+        base_location_height
 
     challenge.sample_again()
     challenge.current_question = 0
-    n_consecutive_frames = 0
-    challenge_text = ['' for i in range(challenge.number_of_questions)]
-    challenge_result = False
+    challenge.n_consecutive_frames = 0
+    challenge.challenge_text = ['' for i in range(challenge.number_of_questions)]
+    challenge.challenge_result = False
     base_location_height = 180
     reset_time_per_question()
-    total_attempt += 1
+    challenge.total_attempt += 1
 
 
 def add_timer(to_frame):
@@ -158,7 +151,7 @@ while cap.isOpened():
     )
 
     cv2.line(hand_face_gesture_frame, (10, 110), (500, 110), color=(168, 144, 34), thickness=2)
-    if not challenge.challenge_started and not challenge_result:
+    if not challenge.challenge_started and not challenge.challenge_result:
         add_text_to_frame(
             given_frame=hand_face_gesture_frame,
             given_text='PRESS `s` to start the challenge',
@@ -178,16 +171,16 @@ while cap.isOpened():
     if key == 115:  # s --> start challenge response
         start_challenge()
 
-    if challenge.challenge_started and total_attempt != config.challenge['allowed_attempt']:
+    if challenge.challenge_started and challenge.total_attempt != config.challenge['allowed_attempt']:
         question = challenge.questions[challenge.current_question]
         add_timer(hand_face_gesture_frame)
-        challenge_text[challenge.current_question] = question['text']
+        challenge.challenge_text[challenge.current_question] = question['text']
         current_result = challenge.challenge_case(question['id'], interaction_data)
         if question['type'] == 1:
             add_icon(hand_face_gesture_frame, question["link"])
         next_consecutive(question, current_result)
 
-        for index, text in enumerate(challenge_text):
+        for index, text in enumerate(challenge.challenge_text):
             base_location_height = 180 + index * 30
             add_text_to_frame(
                 given_frame=hand_face_gesture_frame,
@@ -195,7 +188,7 @@ while cap.isOpened():
                 given_location=(10, base_location_height),
                 given_color=(150, 47, 140)
             )
-    if challenge_result:
+    if challenge.challenge_result:
         cv2.line(hand_face_gesture_frame, (10, base_location_height + 25), (500, base_location_height + 25),
                  color=(0, 255, 0), thickness=1)
         add_text_to_frame(
@@ -204,9 +197,9 @@ while cap.isOpened():
             given_location=(10, base_location_height + 50),
             given_color=(0, 255, 0)
         )
-    if total_attempt != 0 and (total_attempt < config.challenge['allowed_attempt']):
-        desc = 'Total attempt:  ' + str(total_attempt)
-        desc += '| You can try ' + str(config.challenge["allowed_attempt"] - total_attempt) + ' more times'
+    if challenge.total_attempt != 0 and (challenge.total_attempt < config.challenge['allowed_attempt']):
+        desc = 'Total attempt:  ' + str(challenge.total_attempt)
+        desc += '| You can try ' + str(config.challenge["allowed_attempt"] - challenge.total_attempt) + ' more times'
         add_text_to_frame(
             given_frame=hand_face_gesture_frame,
             given_text=desc,
@@ -214,7 +207,7 @@ while cap.isOpened():
             given_color=(0, 0, 255)
         )
 
-    if not challenge_result and total_attempt == config.challenge['allowed_attempt']:
+    if not challenge.challenge_result and challenge.total_attempt == config.challenge['allowed_attempt']:
         cv2.line(hand_face_gesture_frame, (10, base_location_height + 25), (500, base_location_height + 25),
                  color=(0, 0, 255), thickness=2)
         add_text_to_frame(
