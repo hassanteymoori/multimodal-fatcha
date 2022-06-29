@@ -97,6 +97,11 @@ class ChallengeResponse:
         self.base_location_height = 180
         self.reset_time_per_question()
 
+    def challenge_failed(self):
+        self.total_attempt += 1
+        self.sample_again()
+        self.start_challenge()
+
     def reset_time_per_question(self):
         self.current_time = time.time()
         self.time_per_question = self.current_time + config.challenge['time_per_question']
@@ -107,10 +112,8 @@ class ChallengeResponse:
             self.n_consecutive_frames += 1
             if self.n_consecutive_frames >= config.challenge['consecutive']:
                 self.next_question()
-                self.reset_time_per_question()
         else:
             self.n_consecutive_frames = 0
-
         return
 
     def next_question(self):
@@ -122,6 +125,7 @@ class ChallengeResponse:
         self.challenge_text[self.current_question] = f'{self.questions[self.current_question]["text"]} :passed!'
         self.n_consecutive_frames = 0
         self.current_question += 1
+        self.reset_time_per_question()
 
     @staticmethod
     def add_icon(to_frame, path_to_icon):
@@ -130,17 +134,6 @@ class ChallengeResponse:
         h, w, _ = to_frame.shape
         to_frame[0:hs, w - ws:w] = emoji
         return to_frame
-
-    def challenge_failed(self):
-
-        self.sample_again()
-        self.current_question = 0
-        self.n_consecutive_frames = 0
-        self.challenge_text = ['' for i in range(self.number_of_questions)]
-        self.challenge_result = False
-        self.base_location_height = 180
-        self.reset_time_per_question()
-        self.total_attempt += 1
 
     @staticmethod
     def add_text_to_frame(given_frame, given_text, given_location=(10, 150), given_color=(0, 0, 0), font_scale=0.75):
