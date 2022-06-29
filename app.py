@@ -19,7 +19,18 @@ n_consecutive_frames = 0
 challenge_text = ['' for i in range(len(questions))]
 challenge_result = False
 
-height = 150
+base_location_height = 150
+
+
+def start_challenge():
+    global current_question, questions, challenge_result, \
+        flag_to_start_the_challenge, n_consecutive_frames, challenge_text, base_location_height
+    flag_to_start_the_challenge = True
+    current_question = 0
+    n_consecutive_frames = 0
+    challenge_result = False
+    challenge_text = ['' for i in range(len(questions))]
+    base_location_height = 150
 
 
 def add_text_to_frame(given_frame, given_text, given_location=(10, 150), given_color=(0, 0, 0)):
@@ -96,7 +107,7 @@ while cap.isOpened():
     )
 
     cv2.line(hand_face_gesture_frame, (10, 80), (500, 80), color=(168, 144, 34), thickness=1)
-    if not flag_to_start_the_challenge:
+    if not flag_to_start_the_challenge and not challenge_result:
         add_text_to_frame(
             given_frame=hand_face_gesture_frame,
             given_text='PRESS `s` to start the challenge',
@@ -114,7 +125,7 @@ while cap.isOpened():
     if key == 27:
         break
     if key == 115:  # s --> start challenge response
-        flag_to_start_the_challenge = True
+        start_challenge()
 
     if flag_to_start_the_challenge:
         question = questions[current_question]
@@ -125,19 +136,19 @@ while cap.isOpened():
         next_consecutive(question, current_result)
 
     for index, text in enumerate(challenge_text):
-        height = 150 + index * 30
+        base_location_height = 150 + index * 30
         add_text_to_frame(
             given_frame=hand_face_gesture_frame,
             given_text=text,
-            given_location=(10, height),
+            given_location=(10, base_location_height),
             given_color=(150, 47, 140)
         )
     if challenge_result:
-        cv2.line(hand_face_gesture_frame, (10, height+25), (500, height+25), color=(0, 255, 0), thickness=1)
+        cv2.line(hand_face_gesture_frame, (10, base_location_height + 25), (500, base_location_height + 25), color=(0, 255, 0), thickness=1)
         add_text_to_frame(
             given_frame=hand_face_gesture_frame,
             given_text='Access Granted Successfully',
-            given_location=(10, height+50),
+            given_location=(10, base_location_height + 50),
             given_color=(0, 255, 0)
         )
 
