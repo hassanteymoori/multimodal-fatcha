@@ -3,6 +3,7 @@ import time
 import random
 import sys
 import config
+import cv2
 sys.path.append('../../../')
 
 root_dir = os.path.dirname(__file__)
@@ -25,9 +26,30 @@ class ChallengeResponse:
         self.time_per_question = 0
         self.timer_blinking = True
 
+    def start_challenge(self):
+        self.challenge_started = True
+        self.current_question = 0
+        self.n_consecutive_frames = 0
+        self.challenge_result = False
+        self.challenge_text = ['' for i in range(self.number_of_questions)]
+        self.base_location_height = 180
+        self.reset_time_per_question()
+
     def reset_time_per_question(self):
         self.current_time = time.time()
         self.time_per_question = self.current_time + config.challenge['time_per_question']
+
+    def next_consecutive(self, question, current_result):
+        if current_result:
+            self.challenge_text[self.current_question] = f'{question["text"]} :detected! keep it'
+            self.n_consecutive_frames += 1
+            if self.n_consecutive_frames >= config.challenge['consecutive']:
+                self.next_question()
+                self.reset_time_per_question()
+        else:
+            self.n_consecutive_frames = 0
+
+        return
 
     def next_question(self):
 
@@ -38,6 +60,61 @@ class ChallengeResponse:
         self.challenge_text[self.current_question] = f'{self.questions[self.current_question]["text"]} :passed!'
         self.n_consecutive_frames = 0
         self.current_question += 1
+
+    @staticmethod
+    def add_icon(to_frame, path_to_icon):
+        emoji = cv2.imread(path_to_icon)
+        hs, ws, _ = emoji.shape
+        h, w, _ = to_frame.shape
+        to_frame[0:hs, w - ws:w] = emoji
+        return to_frame
+
+    def challenge_failed(self):
+
+        self.sample_again()
+        self.current_question = 0
+        self.n_consecutive_frames = 0
+        self.challenge_text = ['' for i in range(self.number_of_questions)]
+        self.challenge_result = False
+        self.base_location_height = 180
+        self.reset_time_per_question()
+        self.total_attempt += 1
+
+    @staticmethod
+    def add_text_to_frame(given_frame, given_text, given_location=(10, 150), given_color=(0, 0, 0), font_scale=0.75):
+        cv2.putText(
+            img=given_frame,
+            text=given_text,
+            org=given_location,
+            fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+            fontScale=font_scale,
+            color=given_color,
+            thickness=2
+        )
+
+    def add_timer(self, to_frame):
+        timer = int(self.time_per_question - time.time())
+        if timer >= 0:
+            rec_width, rec_height = 220, 55
+            x1, y1 = int(to_frame.shape[1] // 2) - int(rec_width / 2), 0
+            if timer < (config.challenge['time_per_question'] // 2):
+                self.timer_blinking = not self.timer_blinking
+            if self.timer_blinking:
+                cv2.rectangle(
+                    to_frame,
+                    (x1, y1),
+                    (x1 + rec_width, y1 + rec_height),
+                    (143, 138, 127),
+                    -1)
+                self.add_text_to_frame(
+                    given_frame=to_frame,
+                    given_text='Time left: ' + str(int(self.time_per_question - time.time())),
+                    given_location=(x1 + 5, 40),
+                    given_color=(230, 230, 230),
+                    font_scale=1.1,
+                )
+        else:
+            self.challenge_failed()
 
     def _random_questions(self, number):
         questions = self._questions()
