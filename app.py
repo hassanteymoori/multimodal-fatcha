@@ -24,7 +24,7 @@ base_location_height = 150
 
 current_time = 0
 time_per_question = 0
-
+timer_blinking = True
 
 def reset_time_per_question():
     global time_per_question, current_time
@@ -96,25 +96,27 @@ def add_icon(to_frame, path_to_icon):
 
 
 def add_timer(to_frame):
-    global current_time, time_per_question
+    global current_time, time_per_question, timer_blinking
     timer = int(time_per_question - time.time())
     if timer >= 0:
         rec_width, rec_height = 220, 55
         x1, y1 = int(hand_face_gesture_frame.shape[1]//2) - int(rec_width/2), 0
-
-        cv2.rectangle(
-            to_frame,
-            (x1, y1),
-            (x1 + rec_width, y1 + rec_height),
-            (143, 138, 127),
-            -1)
-        add_text_to_frame(
-            given_frame=to_frame,
-            given_text='Time left: ' + str(int(time_per_question - time.time())),
-            given_location=(x1 + 5, 40),
-            # given_color=(3, 186, 252),
-            given_color=(230, 230, 230),
-            font_scale=1.1,
+        if timer < (config.challenge['time_per_question'] // 2):
+            timer_blinking = not timer_blinking
+        if timer_blinking:
+            cv2.rectangle(
+                to_frame,
+                (x1, y1),
+                (x1 + rec_width, y1 + rec_height),
+                (143, 138, 127),
+                -1)
+            add_text_to_frame(
+                given_frame=to_frame,
+                given_text='Time left: ' + str(int(time_per_question - time.time())),
+                given_location=(x1 + 5, 40),
+                # given_color=(3, 186, 252),
+                given_color=(230, 230, 230),
+                font_scale=1.1,
         )
 
 
