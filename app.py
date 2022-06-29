@@ -16,24 +16,24 @@ questions = challenge.random_questions(config.challenge['number_of_challenges'])
 flag_to_start_the_challenge = False
 current_question = 0
 n_consecutive_frames = 0
-
-starter_text = 'press `s` when you were ready to start the challenge'
-
-challenge_result = 'Failed'
 challenge_text = ['' for i in range(len(questions))]
+challenge_result = False
+
 height = 150
 
 
-def show_image(img, text, color=(0, 0, 0), height=150):
+def add_text_to_frame(given_frame, given_text, given_location=(10, 150), given_color=(0, 0, 0)):
     cv2.putText(
-        img,
-        text,
-        (10, height),
-        cv2.FONT_HERSHEY_SIMPLEX,
-        0.75,
-        color,
-        2)
-    return img
+        img=given_frame,
+        text=given_text,
+        org=given_location,
+        fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+        fontScale=0.75,
+        color=given_color,
+        thickness=2
+    )
+
+    return given_frame
 
 
 def next_question():
@@ -41,7 +41,7 @@ def next_question():
         flag_to_start_the_challenge, n_consecutive_frames, challenge_text
 
     if current_question == (len(questions) - 1):
-        challenge_result = 'Passed'
+        challenge_result = True
         flag_to_start_the_challenge = False
 
     challenge_text[current_question] = f'{question["text"]} :passed!'
@@ -64,12 +64,12 @@ def next_consecutive(current_question_obj, challenge_current_result):
     return
 
 
-def add_icon(frame, path_to_icon):
+def add_icon(to_frame, path_to_icon):
     emoji = cv2.imread(path_to_icon)
     hs, ws, _ = emoji.shape
-    h, w, _ = frame.shape
-    frame[0:hs, w - ws:w] = emoji
-    return frame
+    h, w, _ = to_frame.shape
+    to_frame[0:hs, w - ws:w] = emoji
+    return to_frame
 
 
 while cap.isOpened():
@@ -96,7 +96,13 @@ while cap.isOpened():
     )
 
     cv2.line(hand_face_gesture_frame, (10, 80), (500, 80), color=(168, 144, 34), thickness=1)
-    show_image(hand_face_gesture_frame, starter_text, color=(176, 119, 49), height=110)
+    if not flag_to_start_the_challenge:
+        add_text_to_frame(
+            given_frame=hand_face_gesture_frame,
+            given_text='PRESS `s` to start the challenge',
+            given_location=(10, 110),
+            given_color=(176, 119, 49)
+        )
     interaction_data = {
         "head_pose_class": head_pose_class,
         "hand_class_label": hand_class_label,
@@ -109,7 +115,6 @@ while cap.isOpened():
         break
     if key == 115:  # s --> start challenge response
         flag_to_start_the_challenge = True
-        starter_text = ''
 
     if flag_to_start_the_challenge:
         question = questions[current_question]
@@ -121,10 +126,20 @@ while cap.isOpened():
 
     for index, text in enumerate(challenge_text):
         height = 150 + index * 30
-
-        show_image(hand_face_gesture_frame, text, color=(150, 47, 140), height=height)
-    if challenge_result == 'Passed':
-        show_image(hand_face_gesture_frame, color=(0, 255, 0), text='Access Granted Successfully', height=height + 50)
+        add_text_to_frame(
+            given_frame=hand_face_gesture_frame,
+            given_text=text,
+            given_location=(10, height),
+            given_color=(150, 47, 140)
+        )
+    if challenge_result:
+        cv2.line(hand_face_gesture_frame, (10, height+25), (500, height+25), color=(0, 255, 0), thickness=1)
+        add_text_to_frame(
+            given_frame=hand_face_gesture_frame,
+            given_text='Access Granted Successfully',
+            given_location=(10, height+50),
+            given_color=(0, 255, 0)
+        )
 
     cv2.imshow("img", cv2.resize(hand_face_gesture_frame, None, fx=1.5, fy=1.5, interpolation=cv2.INTER_CUBIC))
 
