@@ -13,8 +13,6 @@ hand_landmarks = HandLandmark()
 key_points_classifier = KeyPointClassifier()
 challenge = ChallengeResponse(config.challenge['number_of_challenges'])
 
-base_location_height = 170
-
 current_time = 0
 time_per_question = 0
 timer_blinking = True
@@ -27,14 +25,13 @@ def reset_time_per_question():
 
 
 def start_challenge():
-    global challenge, \
-        base_location_height, current_time, time_per_question
+    global challenge, current_time, time_per_question
     challenge.challenge_started = True
     challenge.current_question = 0
     challenge.n_consecutive_frames = 0
     challenge.challenge_result = False
     challenge.challenge_text = ['' for i in range(challenge.number_of_questions)]
-    base_location_height = 180
+    challenge.base_location_height = 180
     reset_time_per_question()
 
 
@@ -49,29 +46,14 @@ def add_text_to_frame(given_frame, given_text, given_location=(10, 150), given_c
         thickness=2
     )
 
-
-def next_question():
-    global  challenge
-
-    if challenge.current_question == (challenge.number_of_questions - 1):
-        challenge.challenge_result = True
-        challenge.challenge_started = False
-
-    challenge.challenge_text[challenge.current_question] = f'{question["text"]} :passed!'
-    challenge.n_consecutive_frames = 0
-    challenge.current_question += 1
-
-    reset_time_per_question()
-    return
-
-
 def next_consecutive(current_question_obj, challenge_current_result):
     global challenge
     if challenge_current_result:
         challenge.challenge_text[challenge.current_question] = f'{current_question_obj["text"]} :detected! keep it'
         challenge.n_consecutive_frames += 1
         if challenge.n_consecutive_frames >= config.challenge['consecutive']:
-            next_question()
+            challenge.next_question()
+            reset_time_per_question()
     else:
         challenge.n_consecutive_frames = 0
 
@@ -87,15 +69,14 @@ def add_icon(to_frame, path_to_icon):
 
 
 def challenge_failed():
-    global challenge, \
-        base_location_height
+    global challenge
 
     challenge.sample_again()
     challenge.current_question = 0
     challenge.n_consecutive_frames = 0
     challenge.challenge_text = ['' for i in range(challenge.number_of_questions)]
     challenge.challenge_result = False
-    base_location_height = 180
+    challenge.base_location_height = 180
     reset_time_per_question()
     challenge.total_attempt += 1
 
@@ -181,20 +162,20 @@ while cap.isOpened():
         next_consecutive(question, current_result)
 
         for index, text in enumerate(challenge.challenge_text):
-            base_location_height = 180 + index * 30
+            challenge.base_location_height = 180 + index * 30
             add_text_to_frame(
                 given_frame=hand_face_gesture_frame,
                 given_text=text,
-                given_location=(10, base_location_height),
+                given_location=(10, challenge.base_location_height),
                 given_color=(150, 47, 140)
             )
     if challenge.challenge_result:
-        cv2.line(hand_face_gesture_frame, (10, base_location_height + 25), (500, base_location_height + 25),
+        cv2.line(hand_face_gesture_frame, (10, challenge.base_location_height + 25), (500, challenge.base_location_height + 25),
                  color=(0, 255, 0), thickness=1)
         add_text_to_frame(
             given_frame=hand_face_gesture_frame,
             given_text='Access Granted Successfully',
-            given_location=(10, base_location_height + 50),
+            given_location=(10, challenge.base_location_height + 50),
             given_color=(0, 255, 0)
         )
     if challenge.total_attempt != 0 and (challenge.total_attempt < config.challenge['allowed_attempt']):
@@ -208,12 +189,12 @@ while cap.isOpened():
         )
 
     if not challenge.challenge_result and challenge.total_attempt == config.challenge['allowed_attempt']:
-        cv2.line(hand_face_gesture_frame, (10, base_location_height + 25), (500, base_location_height + 25),
+        cv2.line(hand_face_gesture_frame, (10, challenge.base_location_height + 25), (500, challenge.base_location_height + 25),
                  color=(0, 0, 255), thickness=2)
         add_text_to_frame(
             given_frame=hand_face_gesture_frame,
             given_text='Access Denied',
-            given_location=(10, base_location_height + 50),
+            given_location=(10, challenge.base_location_height + 50),
             given_color=(0, 0, 255)
         )
 

@@ -16,6 +16,17 @@ class ChallengeResponse:
         self.n_consecutive_frames = 0
         self.challenge_text = ['' for _ in self.questions]
         self.total_attempt = 0
+        self.base_location_height = 180
+
+    def next_question(self):
+
+        if self.current_question == (self.number_of_questions - 1):
+            self.challenge_result = True
+            self.challenge_started = False
+
+        self.challenge_text[self.current_question] = f'{self.questions[self.current_question]["text"]} :passed!'
+        self.n_consecutive_frames = 0
+        self.current_question += 1
 
     def _random_questions(self, number):
         questions = self._questions()
