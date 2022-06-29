@@ -5,7 +5,7 @@ import itertools
 
 
 class CSVLogging:
-    def __init__(self, location=config.gesture['logging']):
+    def __init__(self, location=config.gesture["logging"]):
         self.location = location
         self.flag = False
 
@@ -14,7 +14,7 @@ class CSVLogging:
         processed_landmark = self.landmark_list(frame, landmarks)
         pre_processed_landmark_list = self.pre_process_landmark(processed_landmark)
 
-        with open(self.location, 'a', newline="") as file:
+        with open(self.location, "a", newline="") as file:
             writer = csv.writer(file)
             writer.writerow([
                 number_for_gesture, *pre_processed_landmark_list

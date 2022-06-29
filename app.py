@@ -1,24 +1,16 @@
 import cv2
 import config
 from modules.hand_landmarks import HandLandmark
-from modules.face_detection import FaceDetection
+from modules.face_mesh import FaceMesh
 from modules.gesture.keypoint_classifier import KeyPointClassifier
-from modules.gesture.key_points_logging import CSVLogging
+from modules.anti_spoofing.challenge.response import ChallengeResponse
 
-import csv
+cap = cv2.VideoCapture(0)  # To use a video file as input: cv2.VideoCapture("filename.mp4")
 
-cap = cv2.VideoCapture(0)  # To use a video file as input: cv2.VideoCapture('filename.mp4')
-cap.set(3, config.camera['width'])
-cap.set(4, config.camera['height'])
-
-face_detection = FaceDetection()
+face_mesh = FaceMesh()
 hand_landmarks = HandLandmark()
 key_points_classifier = KeyPointClassifier()
-with open(config.gesture['gestures_label'], encoding='utf-8-sig') as f:
-    keypoint_classifier_labels = csv.reader(f)
-    keypoint_classifier_labels = [
-        row[0] for row in keypoint_classifier_labels
-    ]
+challenge = ChallengeResponse(config.challenge['number_of_challenges'])
 
 while cap.isOpened():
     # Read the frame
@@ -26,31 +18,43 @@ while cap.isOpened():
 
     if not success:
         print("Ignoring empty camera frame.")
-        # If loading a video, use 'break' instead of 'continue'.
+        # If loading a video, use "break" instead of "continue".
         continue
 
-    face_detected_frame = face_detection.detect(cv2.flip(frame, 1))
-    hand_face_detected_frame, results = hand_landmarks.detect(face_detected_frame, True, landmarks=True)
+    face_detected_frame, head_pose_class = face_mesh.detect(
+        cv2.flip(frame, 1),
+        with_pose_estimator=True
+    )
+    hand_face_detected_frame, results, hand_class_label = hand_landmarks.detect(
+        face_detected_frame,
+        draw_bbox=False,
+        landmarks=True
+    )
+    hand_face_gesture_frame, gesture_class_id = key_points_classifier.show_on_screen(
+        hand_face_detected_frame,
+        results
+    )
+    cv2.line(hand_face_gesture_frame, (10, 110), (500, 110), color=(168, 144, 34), thickness=2)
 
-    if results.multi_hand_landmarks is not None:
-        for h_landmarks in results.multi_hand_landmarks:
-            class_id = key_points_classifier(
-                CSVLogging.pre_process_landmark(
-                    CSVLogging.landmark_list(hand_face_detected_frame, h_landmarks)
-                )
-            )
-            cv2.putText(
-                hand_face_detected_frame,
-                "Finger Gesture:" + keypoint_classifier_labels[class_id],
-                (10, 60),
-                cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0),
-                4,
-                cv2.LINE_AA
-            )
-    cv2.imshow('img', hand_face_detected_frame)
     # Stop if escape key is pressed
-    k = cv2.waitKey(30) & 0xff
-    if k == 27:
+    key = cv2.waitKey(30) & 0xff
+    if key == 27:
         break
-# Release the VideoCapture object
+    if key == 115:  # s --> start challenge response
+        challenge.start_challenge()
+
+    challenge.press_to_start_challenge_text(hand_face_gesture_frame)
+    challenge.challenge_in_progress(
+        hand_face_gesture_frame,
+        {
+            "head_pose_class": head_pose_class,
+            "hand_class_label": hand_class_label,
+            "gesture_class_id": gesture_class_id
+        }
+    )
+
+    challenge.challenge_results(hand_face_gesture_frame)
+
+    cv2.imshow("img", cv2.resize(hand_face_gesture_frame, None, fx=1.5, fy=1.5, interpolation=cv2.INTER_CUBIC))
+
 cap.release()
