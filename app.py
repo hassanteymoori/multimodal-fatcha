@@ -13,26 +13,16 @@ hand_landmarks = HandLandmark()
 key_points_classifier = KeyPointClassifier()
 challenge = ChallengeResponse(config.challenge['number_of_challenges'])
 
-current_time = 0
-time_per_question = 0
-timer_blinking = True
-
-
-def reset_time_per_question():
-    global time_per_question, current_time
-    current_time = time.time()
-    time_per_question = current_time + config.challenge['time_per_question']
-
 
 def start_challenge():
-    global challenge, current_time, time_per_question
+    global challenge
     challenge.challenge_started = True
     challenge.current_question = 0
     challenge.n_consecutive_frames = 0
     challenge.challenge_result = False
     challenge.challenge_text = ['' for i in range(challenge.number_of_questions)]
     challenge.base_location_height = 180
-    reset_time_per_question()
+    challenge.reset_time_per_question()
 
 
 def add_text_to_frame(given_frame, given_text, given_location=(10, 150), given_color=(0, 0, 0), font_scale=0.75):
@@ -46,6 +36,7 @@ def add_text_to_frame(given_frame, given_text, given_location=(10, 150), given_c
         thickness=2
     )
 
+
 def next_consecutive(current_question_obj, challenge_current_result):
     global challenge
     if challenge_current_result:
@@ -53,7 +44,7 @@ def next_consecutive(current_question_obj, challenge_current_result):
         challenge.n_consecutive_frames += 1
         if challenge.n_consecutive_frames >= config.challenge['consecutive']:
             challenge.next_question()
-            reset_time_per_question()
+            challenge.reset_time_per_question()
     else:
         challenge.n_consecutive_frames = 0
 
@@ -77,19 +68,18 @@ def challenge_failed():
     challenge.challenge_text = ['' for i in range(challenge.number_of_questions)]
     challenge.challenge_result = False
     challenge.base_location_height = 180
-    reset_time_per_question()
+    challenge.reset_time_per_question()
     challenge.total_attempt += 1
 
 
 def add_timer(to_frame):
-    global current_time, time_per_question, timer_blinking
-    timer = int(time_per_question - time.time())
+    timer = int(challenge.time_per_question - time.time())
     if timer >= 0:
         rec_width, rec_height = 220, 55
         x1, y1 = int(to_frame.shape[1] // 2) - int(rec_width / 2), 0
         if timer < (config.challenge['time_per_question'] // 2):
-            timer_blinking = not timer_blinking
-        if timer_blinking:
+            challenge.timer_blinking = not challenge.timer_blinking
+        if challenge.timer_blinking:
             cv2.rectangle(
                 to_frame,
                 (x1, y1),
@@ -98,7 +88,7 @@ def add_timer(to_frame):
                 -1)
             add_text_to_frame(
                 given_frame=to_frame,
-                given_text='Time left: ' + str(int(time_per_question - time.time())),
+                given_text='Time left: ' + str(int(challenge.time_per_question - time.time())),
                 given_location=(x1 + 5, 40),
                 # given_color=(3, 186, 252),
                 given_color=(230, 230, 230),

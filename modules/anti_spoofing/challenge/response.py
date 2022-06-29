@@ -1,5 +1,9 @@
 import os
+import time
 import random
+import sys
+import config
+sys.path.append('../../../')
 
 root_dir = os.path.dirname(__file__)
 emoji_directory = os.path.join(root_dir, "emoji")
@@ -17,6 +21,13 @@ class ChallengeResponse:
         self.challenge_text = ['' for _ in self.questions]
         self.total_attempt = 0
         self.base_location_height = 180
+        self.current_time = 0
+        self.time_per_question = 0
+        self.timer_blinking = True
+
+    def reset_time_per_question(self):
+        self.current_time = time.time()
+        self.time_per_question = self.current_time + config.challenge['time_per_question']
 
     def next_question(self):
 
