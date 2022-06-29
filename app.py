@@ -1,5 +1,6 @@
 import cv2
 import config
+import time
 from modules.hand_landmarks import HandLandmark
 from modules.face_mesh import FaceMesh
 from modules.gesture.keypoint_classifier import KeyPointClassifier
@@ -21,25 +22,36 @@ challenge_result = False
 
 base_location_height = 150
 
+current_time = 0
+time_per_question = 0
+
+
+def reset_time_per_question():
+    global time_per_question, current_time
+    current_time = time.time()
+    time_per_question = current_time + config.challenge['time_per_question']
+
 
 def start_challenge():
     global current_question, questions, challenge_result, \
-        flag_to_start_the_challenge, n_consecutive_frames, challenge_text, base_location_height
+        flag_to_start_the_challenge, n_consecutive_frames, challenge_text, \
+        base_location_height, current_time, time_per_question
     flag_to_start_the_challenge = True
     current_question = 0
     n_consecutive_frames = 0
     challenge_result = False
     challenge_text = ['' for i in range(len(questions))]
     base_location_height = 150
+    reset_time_per_question()
 
 
-def add_text_to_frame(given_frame, given_text, given_location=(10, 150), given_color=(0, 0, 0)):
+def add_text_to_frame(given_frame, given_text, given_location=(10, 150), given_color=(0, 0, 0), font_scale=0.75):
     cv2.putText(
         img=given_frame,
         text=given_text,
         org=given_location,
         fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-        fontScale=0.75,
+        fontScale=font_scale,
         color=given_color,
         thickness=2
     )
@@ -81,6 +93,29 @@ def add_icon(to_frame, path_to_icon):
     h, w, _ = to_frame.shape
     to_frame[0:hs, w - ws:w] = emoji
     return to_frame
+
+
+def add_timer(to_frame):
+    global current_time, time_per_question
+    timer = int(time_per_question - time.time())
+    if timer >= 0:
+        rec_width, rec_height = 220, 55
+        x1, y1 = int(hand_face_gesture_frame.shape[1]//2) - int(rec_width/2), 0
+
+        cv2.rectangle(
+            to_frame,
+            (x1, y1),
+            (x1 + rec_width, y1 + rec_height),
+            (143, 138, 127),
+            -1)
+        add_text_to_frame(
+            given_frame=to_frame,
+            given_text='Time left: ' + str(int(time_per_question - time.time())),
+            given_location=(x1 + 5, 40),
+            # given_color=(3, 186, 252),
+            given_color=(230, 230, 230),
+            font_scale=1.1,
+        )
 
 
 while cap.isOpened():
@@ -129,6 +164,7 @@ while cap.isOpened():
 
     if flag_to_start_the_challenge:
         question = questions[current_question]
+        add_timer(hand_face_gesture_frame)
         challenge_text[current_question] = question['text']
         current_result = challenge.challenge_case(question['id'], interaction_data)
         if question['type'] == 1:
