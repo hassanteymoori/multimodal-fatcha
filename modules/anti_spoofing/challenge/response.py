@@ -26,6 +26,68 @@ class ChallengeResponse:
         self.time_per_question = 0
         self.timer_blinking = True
 
+    def press_to_start_challenge_text(self, frame):
+        if not self.challenge_started and not self.challenge_result:
+            self.add_text_to_frame(
+                given_frame=frame,
+                given_text='PRESS `s` to start the challenge',
+                given_location=(10, 140),
+                given_color=(176, 119, 49)
+            )
+        return
+
+    def challenge_in_progress(self, frame, interaction_data):
+        if self.challenge_started and self.total_attempt != config.challenge['allowed_attempt']:
+            question = self.questions[self.current_question]
+            self.add_timer(frame)
+            self.challenge_text[self.current_question] = question['text']
+            current_result = self.challenge_case(question['id'], interaction_data)
+            if question['type'] == 1:
+                self.add_icon(frame, question["link"])
+            self.next_consecutive(question, current_result)
+
+            for index, text in enumerate(self.challenge_text):
+                self.base_location_height = 180 + index * 30
+                self.add_text_to_frame(
+                    given_frame=frame,
+                    given_text=text,
+                    given_location=(10, self.base_location_height),
+                    given_color=(150, 47, 140)
+                )
+
+    def challenge_results(self, frame):
+        if self.challenge_result:
+            cv2.line(frame, (10, self.base_location_height + 25),
+                     (500, self.base_location_height + 25),
+                     color=(0, 255, 0), thickness=1)
+            self.add_text_to_frame(
+                given_frame=frame,
+                given_text='Access Granted Successfully',
+                given_location=(10, self.base_location_height + 50),
+                given_color=(0, 255, 0)
+            )
+        if self.total_attempt != 0 and (self.total_attempt < config.challenge['allowed_attempt']):
+            desc = 'Total attempt:  ' + str(self.total_attempt)
+            desc += '| You can try ' + str(
+                config.challenge["allowed_attempt"] - self.total_attempt) + ' more times'
+            self.add_text_to_frame(
+                given_frame=frame,
+                given_text=desc,
+                given_location=(10, 90),
+                given_color=(0, 0, 255)
+            )
+
+        if not self.challenge_result and self.total_attempt == config.challenge['allowed_attempt']:
+            cv2.line(frame, (10, self.base_location_height + 25),
+                     (500, self.base_location_height + 25),
+                     color=(0, 0, 255), thickness=2)
+            self.add_text_to_frame(
+                given_frame=frame,
+                given_text='Access Denied',
+                given_location=(10, self.base_location_height + 50),
+                given_color=(0, 0, 255)
+            )
+
     def start_challenge(self):
         self.challenge_started = True
         self.current_question = 0
