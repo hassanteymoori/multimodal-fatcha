@@ -37,7 +37,7 @@ class ChallengeResponse:
         return
 
     def challenge_in_progress(self, frame, interaction_data):
-        if self.challenge_started and self.total_attempt != config.challenge['allowed_attempt']:
+        if self.challenge_started and self.total_attempt <= config.challenge['allowed_attempt']:
             question = self.questions[self.current_question]
             self.add_timer(frame)
             self.challenge_text[self.current_question] = question['text']
@@ -66,10 +66,14 @@ class ChallengeResponse:
                 given_location=(10, self.base_location_height + 50),
                 given_color=(0, 255, 0)
             )
-        if self.total_attempt != 0 and (self.total_attempt < config.challenge['allowed_attempt']):
-            desc = 'Total attempt:  ' + str(self.total_attempt)
-            desc += '| You can try ' + str(
-                config.challenge["allowed_attempt"] - self.total_attempt) + ' more times'
+        if self.total_attempt != 0 and (self.total_attempt <= config.challenge['allowed_attempt']):
+            desc = 'Total attempt: ' + str(self.total_attempt)
+
+            if self.total_attempt == 3:
+                desc += ' | LAST CHANCE!'
+            else:
+                desc += ' | You can try ' + str(
+                    config.challenge["allowed_attempt"] - self.total_attempt) + ' more times'
             self.add_text_to_frame(
                 given_frame=frame,
                 given_text=desc,
@@ -77,7 +81,7 @@ class ChallengeResponse:
                 given_color=(0, 0, 255)
             )
 
-        if not self.challenge_result and self.total_attempt == config.challenge['allowed_attempt']:
+        if not self.challenge_result and self.total_attempt > config.challenge['allowed_attempt']:
             cv2.line(frame, (10, self.base_location_height + 25),
                      (500, self.base_location_height + 25),
                      color=(0, 0, 255), thickness=2)
@@ -96,9 +100,9 @@ class ChallengeResponse:
         self.challenge_text = ['' for i in range(self.number_of_questions)]
         self.base_location_height = 180
         self.reset_time_per_question()
+        self.total_attempt += 1
 
     def challenge_failed(self):
-        self.total_attempt += 1
         self.sample_again()
         self.start_challenge()
 
