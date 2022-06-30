@@ -13,6 +13,7 @@ class EmotionDetector:
         self.labels = config.emotion
 
     def detect(self, frame, results):
+        arr_res = [-1, 0]
         if results.multi_face_landmarks:
             for face_landmarks in results.multi_face_landmarks:
                 h, w, c = frame.shape
@@ -29,19 +30,21 @@ class EmotionDetector:
                         cx_max = cx
                     if cy > cy_max:
                         cy_max = cy
-
-                gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-                roi_gray = gray[cy_min:cy_max, cx_min:cx_max]
-                roi_gray = cv2.resize(roi_gray, (48, 48), interpolation=cv2.INTER_AREA)
-                # bbox = np.array([cx_min, cy_min, (cx_max - cx_min), (cy_max - cy_min)])
-                roi = roi_gray.astype('float') / 255.0
-                roi = img_to_array(roi)
-                roi = np.expand_dims(roi, axis=0)
-                # cv2.rectangle(frame, (cx_min, cy_min), (cx_max,  cy_max), (255, 0, 0), 2)
-                predictions = self.model.predict(roi, verbose=0)[0]
-                return predictions.argmax() , max(predictions) * 100
+                bbox = np.array([cx_min, cy_min, (cx_max - cx_min), (cy_max - cy_min)])
+                if not sum(n < 0 for n in bbox) > 0:
+                    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                    roi_gray = gray[cy_min:cy_max, cx_min:cx_max]
+                    roi_gray = cv2.resize(roi_gray, (48, 48), interpolation=cv2.INTER_AREA)
+                    roi = roi_gray.astype('float') / 255.0
+                    roi = img_to_array(roi)
+                    roi = np.expand_dims(roi, axis=0)
+                    # cv2.rectangle(frame, (cx_min, cy_min), (cx_max,  cy_max), (255, 0, 0), 2)
+                    predictions = self.model.predict(roi, verbose=0)[0]
+                    return predictions.argmax(), max(predictions) * 100
+                else:
+                    return arr_res
         else:
-            return -1
+            return arr_res
 
     def label(self, class_id):
         return self.labels[class_id]
