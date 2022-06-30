@@ -31,11 +31,11 @@ face = {
 }
 
 head_pose = {
-    1: "You are looking left",
-    2: "You are looking right",
-    3: "You are looking down",
-    4: "You are looking up",
-    5: "You are looking forward",
+    1: "Looking left",
+    2: "Looking right",
+    3: "Looking down",
+    4: "Looking up",
+    5: "Looking forward",
 }
 
 challenge = {

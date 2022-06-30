@@ -1,7 +1,6 @@
 import numpy as np
 import tensorflow as tf
 import config
-import cv2
 import csv
 from ..gesture.key_points_logging import CSVLogging
 
@@ -51,18 +50,10 @@ class KeyPointClassifier(object):
         return result_index, maximum
 
     def show_on_screen(self, hand_face_detected_frame, results):
-        gesture_class_id = -1
+        gesture_class_id = 9
+        maximum = 0
         if results.multi_hand_landmarks is not None:
             for h_landmarks in results.multi_hand_landmarks:
                 gesture_class_id, maximum = self.__call__(hand_face_detected_frame, h_landmarks)
-                cv2.putText(
-                    hand_face_detected_frame,
-                    "Finger Gesture: " + self.keypoint_classifier_labels[gesture_class_id] + "  : " + str(int(maximum)) + " %",
-                    (10, 60),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    0.75,
-                    (0, 0, 0),
-                    2,
-                    cv2.LINE_AA
-                )
-        return hand_face_detected_frame, gesture_class_id
+
+        return hand_face_detected_frame, gesture_class_id, maximum
