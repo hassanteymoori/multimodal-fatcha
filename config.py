@@ -44,3 +44,13 @@ challenge = {
     'consecutive': 25,
     'allowed_attempt': 3
 }
+
+emotion = [ # happy, angry, surprise, neutral
+    'Angry',
+    'Disgust',
+    'Fear',
+    'Happy',
+    'Neutral',
+    'Sad',
+    'Surprise'
+]

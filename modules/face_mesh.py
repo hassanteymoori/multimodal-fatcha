@@ -19,7 +19,7 @@ class FaceMesh:
             min_detection_confidence=self.min_detection_confidence
         )
 
-    def detect(self, frame, with_pose_estimator=False):
+    def detect(self, frame ,with_pose_estimator=False):
         frame.flags.writeable = False
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         results = self.face_mesh.process(frame)
@@ -34,7 +34,7 @@ class FaceMesh:
             for face_landmarks in results.multi_face_landmarks:
                 self._draw_landmarks(frame, face_landmarks)
 
-        return frame, 5 # default class which is forward
+        return frame, 5 , results # default class which is forward
 
     def face_with_head_pose_estimator(self, frame, results):
         head_pose_class = -1  # default is forward
@@ -100,7 +100,8 @@ class FaceMesh:
 
                 self._draw_landmarks(frame, face_landmarks)
 
-        return frame, head_pose_class
+        return frame, head_pose_class, results
+
 
     def _draw_landmarks(self, frame, face_landmarks):
         self.mp_drawing.draw_landmarks(

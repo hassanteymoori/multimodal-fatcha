@@ -7,10 +7,12 @@ from modules.hand_landmarks import HandLandmark
 from modules.face_mesh import FaceMesh
 from modules.gesture.keypoint_classifier import KeyPointClassifier
 from modules.anti_spoofing.challenge.response import ChallengeResponse
+from modules.anti_spoofing.emotion.emotion_detection import EmotionDetector
 
 face_mesh = FaceMesh()
 hand_landmarks = HandLandmark()
 key_points_classifier = KeyPointClassifier()
+emotion_detector = EmotionDetector()
 challenge = ChallengeResponse(config.challenge['number_of_challenges'])
 
 cap = None  # To use a video file as input: cv2.VideoCapture("filename.mp4")
@@ -21,7 +23,7 @@ BROWN = '#82636c'
 GREEN = '#2fcc4e'
 DANGER = '#cc1c08'
 YELLOW = '#baa53d'
-
+LIGHTBLUE = '#48b1cf'
 
 def activate_webcam():
     global cap
@@ -40,10 +42,19 @@ def visualize():
     success, frame = cap.read()
     if success:
         # frame = cv2.resize(frame, None, fx=0.7, fy=0.7, interpolation=cv2.INTER_CUBIC)
-        returned_frame, head_pose_class = face_mesh.detect(
+        returned_frame, head_pose_class, results = face_mesh.detect(
             cv2.flip(frame, 1),
             with_pose_estimator=True
         )
+        emotion_class_id, max_emotion = emotion_detector.detect(frame, results)
+        emotion_text = "Emotion: "
+        if emotion_class_id != -1:
+            emotion_text += emotion_detector.label(emotion_class_id)
+            emotion_text += f' {str(int(max_emotion))} %'
+        else:
+            emotion_text += ' Unknown'
+        label_emotion_info.configure(text=emotion_text)
+
         head_pose_text = f'Pose: {config.head_pose[head_pose_class]}' if head_pose_class != -1 else 'Pose: Unknown'
         label_pose_info.configure(text=head_pose_text)
 
@@ -155,6 +166,14 @@ label_gesture_info = tkinter.Label(
     fg=BROWN,
 )
 label_gesture_info.grid(column=0, row=1, sticky='w', pady=0)
+label_emotion_info = tkinter.Label(
+    right_panel,
+    text="",
+    anchor="w",
+    font=("Helvetica", 16),
+    fg=LIGHTBLUE,
+)
+label_emotion_info.grid(column=0, row=2, sticky='w', pady=0)
 
 center_panel = tkinter.Frame(window)
 center_panel.grid(row=0, column=2, sticky="nsew", pady=10)
