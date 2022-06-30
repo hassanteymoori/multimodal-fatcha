@@ -18,6 +18,7 @@ WARNING = '#db7d09'
 INFO = '#a5ab35'
 PRIMARY = '#3442bf'
 BROWN = '#82636c'
+GREEN = '#2fcc4e'
 
 
 def activate_webcam():
@@ -66,7 +67,11 @@ def visualize():
                 "gesture_class_id": gesture_class_id
             }
         )
-
+        if challenge.is_challenge_in_progress():
+            label_channel_info.configure(
+                text=challenge.text,
+                fg=GREEN if challenge.detected else PRIMARY
+            )
         challenge.challenge_results(returned_frame)
         img = PIL_ImageTk.PhotoImage(
             image=PIL_Image.fromarray(
@@ -90,28 +95,28 @@ window.columnconfigure(0, minsize=2)
 btn_start = tkinter.Button(window, text="Start", relief=tkinter.RAISED, command=activate_webcam)
 btn_start.grid(row=0, column=0, padx=5, pady=10)
 
-frame_general_info = tkinter.Frame(window)
-frame_general_info.grid(row=0, column=1, sticky="nsew", pady=10)
+center_panel = tkinter.Frame(window)
+center_panel.grid(row=0, column=1, sticky="nsew", pady=10)
 label_general_info = tkinter.Label(
-    frame_general_info,
+    center_panel,
     text="",
     font=("Helvetica", 16),
     padx=2,
 )
-label_general_info.grid(row=0, column=0, sticky="nsew", pady=10)
+label_general_info.grid(row=0, column=0, sticky="nsew")
 label_channel_info = tkinter.Label(
-    frame_general_info,
+    center_panel,
     text="",
     font=("Helvetica", 16),
     padx=2,
 )
-label_channel_info.grid(row=0, column=1, sticky="nsew", pady=10)
+label_channel_info.grid(row=1, column=0, sticky="nsew")
 
-frame_detail_info = tkinter.Frame(window)
-frame_detail_info.grid(row=0, column=2, sticky="nsew", pady=10, padx=1)
+right_panel = tkinter.Frame(window)
+right_panel.grid(row=0, column=2, sticky="nsew", pady=10)
 
 label_pose_info = tkinter.Label(
-    frame_detail_info,
+    right_panel,
     text="",
     anchor="w",
     font=("Helvetica", 16),
@@ -119,7 +124,7 @@ label_pose_info = tkinter.Label(
 )
 label_pose_info.grid(column=0, row=0, sticky='w', pady=0)
 label_gesture_info = tkinter.Label(
-    frame_detail_info,
+    right_panel,
     text="",
     anchor="w",
     font=("Helvetica", 16),

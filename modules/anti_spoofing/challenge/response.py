@@ -19,41 +19,27 @@ class ChallengeResponse:
         self.questions = self._random_questions(number_of_questions)
         self.challenge_result = False
         self.n_consecutive_frames = 0
-        self.challenge_text = ['' for _ in self.questions]
+        self.text = ''
+        self.detected = False
         self.total_attempt = 0
         self.base_location_height = 180
         self.current_time = 0
         self.time_per_question = 0
         self.timer_blinking = True
 
-    def press_to_start_challenge_text(self, frame):
-        if not self.challenge_started and not self.challenge_result:
-            self.add_text_to_frame(
-                given_frame=frame,
-                given_text='PRESS `s` to start the challenge',
-                given_location=(10, 140),
-                given_color=(176, 119, 49)
-            )
-        return
+    def is_challenge_in_progress(self):
+        return self.challenge_started and self.total_attempt <= config.challenge['allowed_attempt']
 
     def challenge_in_progress(self, frame, interaction_data):
         if self.challenge_started and self.total_attempt <= config.challenge['allowed_attempt']:
             question = self.questions[self.current_question]
             self.add_timer(frame)
-            self.challenge_text[self.current_question] = question['text']
+            self.text = question['text']
+            self.detected = False
             current_result = self.challenge_case(question['id'], interaction_data)
             if question['type'] == 1:
                 self.add_icon(frame, question["link"])
             self.next_consecutive(question, current_result)
-
-            for index, text in enumerate(self.challenge_text):
-                self.base_location_height = 180 + index * 30
-                self.add_text_to_frame(
-                    given_frame=frame,
-                    given_text=text,
-                    given_location=(10, self.base_location_height),
-                    given_color=(150, 47, 140)
-                )
 
     def challenge_results(self, frame):
         if self.challenge_result:
@@ -97,7 +83,8 @@ class ChallengeResponse:
         self.current_question = 0
         self.n_consecutive_frames = 0
         self.challenge_result = False
-        self.challenge_text = ['' for i in range(self.number_of_questions)]
+        self.detected = False
+        self.text = ''
         self.base_location_height = 180
         self.reset_time_per_question()
         self.total_attempt += 1
@@ -112,7 +99,8 @@ class ChallengeResponse:
 
     def next_consecutive(self, question, current_result):
         if current_result:
-            self.challenge_text[self.current_question] = f'{question["text"]} :detected! keep it'
+            self.detected = True
+            self.text = f'{question["text"]} :detected! keep it'
             self.n_consecutive_frames += 1
             if self.n_consecutive_frames >= config.challenge['consecutive']:
                 self.next_question()
@@ -126,7 +114,6 @@ class ChallengeResponse:
             self.challenge_result = True
             self.challenge_started = False
 
-        self.challenge_text[self.current_question] = f'{self.questions[self.current_question]["text"]} :passed!'
         self.n_consecutive_frames = 0
         self.current_question += 1
         self.reset_time_per_question()
