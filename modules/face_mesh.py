@@ -34,10 +34,10 @@ class FaceMesh:
             for face_landmarks in results.multi_face_landmarks:
                 self._draw_landmarks(frame, face_landmarks)
 
-        return frame, config.head_pose[5]
+        return frame, 5 # default class which is forward
 
     def face_with_head_pose_estimator(self, frame, results):
-        head_pose_class = config.head_pose[5]  # default is forward
+        head_pose_class = -1  # default is forward
         frame_height, frame_width, _ = frame.shape
         face_3d = []
         face_2d = []
@@ -88,32 +88,16 @@ class FaceMesh:
 
                 # See where the user"s head tilting
                 if y < -10:
-                    pose_text = config.head_pose[1]
                     head_pose_class = 1
                 elif y > 10:
-                    pose_text = config.head_pose[2]
                     head_pose_class = 2
                 elif x < -10:
-                    pose_text = config.head_pose[3]
                     head_pose_class = 3
                 elif x > 10:
-                    pose_text = config.head_pose[4]
                     head_pose_class = 4
                 else:
-                    pose_text = config.head_pose[5]
                     head_pose_class = 5
 
-                # Add the pose_text on the image
-                cv2.putText(
-                    frame,
-                    "Pose: " + pose_text,
-                    (10, 30),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    0.75,
-                    (0, 0, 0),
-                    2,
-                    cv2.LINE_AA
-                )
                 self._draw_landmarks(frame, face_landmarks)
 
         return frame, head_pose_class
