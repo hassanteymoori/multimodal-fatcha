@@ -19,6 +19,8 @@ INFO = '#a5ab35'
 PRIMARY = '#3442bf'
 BROWN = '#82636c'
 GREEN = '#2fcc4e'
+DANGER = '#cc1c08'
+YELLOW = '#baa53d'
 
 
 def activate_webcam():
@@ -67,12 +69,51 @@ def visualize():
                 "gesture_class_id": gesture_class_id
             }
         )
+
         if challenge.is_challenge_in_progress():
             label_channel_info.configure(
                 text=challenge.text,
-                fg=GREEN if challenge.detected else PRIMARY
+                fg=GREEN if challenge.detected else PRIMARY,
+                font=('Helvetica', 20),
             )
-        challenge.challenge_results(returned_frame)
+            if challenge.questions[challenge.current_question]['type'] == 1:
+                icon = PIL_ImageTk.PhotoImage(
+                    image=PIL_Image.fromarray(
+                        cv2.cvtColor(
+                            cv2.resize(
+                                cv2.imread(challenge.questions[challenge.current_question]['link']),
+                                (70, 70)
+                            ),
+                            cv2.COLOR_BGR2RGB
+                        )
+                    )
+                )
+                label_icon.configure(image=icon)
+                label_icon.image = icon
+            if challenge.is_on_going():
+                label_general_info.configure(
+                    text=challenge.total_attempt_text,
+                    fg=DANGER,
+                )
+        if challenge.is_access_granted():
+            label_general_info.configure(
+                text='Access Granted Successfully',
+                fg=GREEN,
+                font=('Helvetica', 20),
+            )
+            label_icon.image = ''
+            label_icon.configure(image='')
+            label_channel_info.configure(text='')
+        if challenge.is_access_denied():
+            label_general_info.configure(
+                text='Access Denied ... !',
+                fg=DANGER,
+                font=('Helvetica', 20),
+            )
+            label_icon.image = ''
+            label_icon.configure(image='')
+            label_channel_info.configure(text='')
+
         img = PIL_ImageTk.PhotoImage(
             image=PIL_Image.fromarray(
                 cv2.cvtColor(returned_frame, cv2.COLOR_BGR2RGB)
@@ -92,28 +133,11 @@ window.geometry('1280x720')
 window.title("Multimodal Fatcha")
 window.columnconfigure(0, minsize=2)
 
-btn_start = tkinter.Button(window, text="Start", relief=tkinter.RAISED, command=activate_webcam)
+btn_start = tkinter.Button(window, text="Start the process", relief=tkinter.RAISED, command=activate_webcam)
 btn_start.grid(row=0, column=0, padx=5, pady=10)
 
-center_panel = tkinter.Frame(window)
-center_panel.grid(row=0, column=1, sticky="nsew", pady=10)
-label_general_info = tkinter.Label(
-    center_panel,
-    text="",
-    font=("Helvetica", 16),
-    padx=2,
-)
-label_general_info.grid(row=0, column=0, sticky="nsew")
-label_channel_info = tkinter.Label(
-    center_panel,
-    text="",
-    font=("Helvetica", 16),
-    padx=2,
-)
-label_channel_info.grid(row=1, column=0, sticky="nsew")
-
 right_panel = tkinter.Frame(window)
-right_panel.grid(row=0, column=2, sticky="nsew", pady=10)
+right_panel.grid(row=0, column=1, sticky="nsew", pady=10)
 
 label_pose_info = tkinter.Label(
     right_panel,
@@ -132,8 +156,28 @@ label_gesture_info = tkinter.Label(
 )
 label_gesture_info.grid(column=0, row=1, sticky='w', pady=0)
 
+center_panel = tkinter.Frame(window)
+center_panel.grid(row=0, column=2, sticky="nsew", pady=10)
+label_general_info = tkinter.Label(
+    center_panel,
+    text="",
+    font=("Helvetica", 16),
+    padx=2,
+)
+label_general_info.grid(row=0, column=0, sticky="nsew")
+label_channel_info = tkinter.Label(
+    center_panel,
+    text="",
+    font=("Helvetica", 16),
+    padx=2,
+)
+label_channel_info.grid(row=1, column=0, sticky="nsew")
+
+label_icon = tkinter.Label(window, anchor='e')
+label_icon.grid(row=0, column=3, sticky="nsew")
+
 label_camera = tkinter.Label(window)
-label_camera.grid(row=1, column=0, columnspan=3, sticky="nsew")
+label_camera.grid(row=1, column=0, columnspan=4, sticky="nsew")
 
 
 # Define an event to close the window
@@ -157,5 +201,3 @@ window.bind('q', lambda event: close_win(event))
 window.bind('s', lambda event: start_ch(event))
 
 window.mainloop()
-
-
