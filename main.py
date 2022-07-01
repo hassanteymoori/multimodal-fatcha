@@ -77,7 +77,8 @@ def visualize():
             {
                 "head_pose_class": head_pose_class,
                 "hand_class_label": hand_class_label,
-                "gesture_class_id": gesture_class_id
+                "gesture_class_id": gesture_class_id,
+                'emotion_class_id' : emotion_class_id
             }
         )
 

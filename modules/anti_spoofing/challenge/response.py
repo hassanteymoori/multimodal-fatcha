@@ -344,6 +344,35 @@ class ChallengeResponse:
         else:
             return False
 
+    @staticmethod
+    def _challenge_emotion_angry(interaction_date):
+        if interaction_date['emotion_class_id'] == 0:
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def _challenge_emotion_happy(interaction_date):
+        if interaction_date['emotion_class_id'] == 3:
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def _challenge_emotion_neutral(interaction_date):
+        if interaction_date['emotion_class_id'] == 4:
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def _challenge_emotion_surprise(interaction_date):
+        if interaction_date['emotion_class_id'] == 6:
+            return True
+        else:
+            return False
+
+
     def challenge_case(self, status, interaction_date):
         match status:
             case 1:
@@ -394,6 +423,14 @@ class ChallengeResponse:
                 return self._challenge_omg_with_right(interaction_date)
             case 25:
                 return self._challenge_omg_with_left(interaction_date)
+            case 26:
+                return self._challenge_emotion_angry(interaction_date)
+            case 27:
+                return self._challenge_emotion_happy(interaction_date)
+            case 28:
+                return self._challenge_emotion_neutral(interaction_date)
+            case 29:
+                return self._challenge_emotion_surprise(interaction_date)
             case _:
                 return False
 
@@ -524,17 +561,41 @@ class ChallengeResponse:
                 "text": "Show me `Finger crossed` with your LEFT hand",
                 "link": os.path.join(emoji_directory, "crossed.png")
             },
+            # {
+            #     "id": 24,
+            #     "type": 1,
+            #     "text": "Show me `Mamma Mia!` with your RIGHT hand",
+            #     "link": os.path.join(emoji_directory, "omg.png")
+            # },
+            # {
+            #     "id": 25,
+            #     "type": 1,
+            #     "text": "Show me `Mamma Mia!` with your LEFT hand",
+            #     "link": os.path.join(emoji_directory, "omg.png")
+            # },
             {
-                "id": 24,
+                "id": 26,
                 "type": 1,
-                "text": "Show me `Mamma Mia!` with your RIGHT hand",
-                "link": os.path.join(emoji_directory, "omg.png")
+                "text": "Try to pretend that you are `Angry`",
+                "link": os.path.join(emoji_directory, "angry.png")
             },
             {
-                "id": 25,
+                "id": 27,
                 "type": 1,
-                "text": "Show me `Mamma Mia!` with your LEFT hand",
-                "link": os.path.join(emoji_directory, "omg.png")
+                "text": "Try to pretend that you are `Happy`",
+                "link": os.path.join(emoji_directory, "happy.png")
+            },
+            {
+                "id": 28,
+                "type": 1,
+                "text": "Stay `Neutral` (you have no emotion)",
+                "link": os.path.join(emoji_directory, "neutral.png")
+            },
+            {
+                "id": 29,
+                "type": 1,
+                "text": "Try to pretend that you are `Surprised`",
+                "link": os.path.join(emoji_directory, "surprised.png")
             },
 
         ]

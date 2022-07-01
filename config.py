@@ -39,7 +39,7 @@ head_pose = {
 }
 
 challenge = {
-    'number_of_challenges': 2,
+    'number_of_challenges': 7,
     'time_per_question': 10,
     'consecutive': 25,
     'allowed_attempt': 3
