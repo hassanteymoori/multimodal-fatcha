@@ -118,6 +118,7 @@ class ChallengeResponse:
         if self.current_question == (self.number_of_questions - 1):
             self.challenge_result = True
             self.challenge_started = False
+            self.voice_assistant.notified = False
 
         self.n_consecutive_frames = 0
         self.current_question += 1
@@ -166,6 +167,15 @@ class ChallengeResponse:
                 )
         else:
             self.challenge_failed()
+            desc = 'Total attempts are ' + str(self.total_attempt)
+
+            if self.total_attempt == 3:
+                desc += ' times; This is your LAST CHANCE! be careful!'
+            else:
+                desc += ' times; You can try ' + str(
+                    config.challenge["allowed_attempt"] - self.total_attempt) + ' more times'
+            if self.is_on_going():
+                self.voice_assistant.kill_previous_and_speak(desc)
 
     def _random_questions(self, number):
         questions = self._questions()

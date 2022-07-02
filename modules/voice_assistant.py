@@ -16,6 +16,7 @@ class VoiceAssistant:
         speech_config.speech_synthesis_voice_name = 'en-US-JennyNeural'
         self.active = True
         self.notified = False
+        self.granted_notified = False
         self.speech_synthesizer = speechsdk.SpeechSynthesizer(
             speech_config=speech_config,
             audio_config=audio_config

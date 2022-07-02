@@ -194,6 +194,11 @@ def visualize():
                     fg=DANGER,
                 )
         if challenge.is_access_granted():
+            if voice_assistant.active and not voice_assistant.granted_notified:
+                voice_assistant.granted_notified = True
+                voice_assistant.kill_previous_and_speak(
+                    'congratulations, you have been granted to access the system!'
+                )
             label_general_info.configure(
                 text='Access Granted Successfully',
                 fg=GREEN,
@@ -203,6 +208,11 @@ def visualize():
             label_icon.configure(image='')
             label_channel_info.configure(text='')
         if challenge.is_access_denied():
+            if voice_assistant.active and not voice_assistant.granted_notified:
+                voice_assistant.granted_notified = True
+                voice_assistant.kill_previous_and_speak(
+                    'Unfortunately, you have not been able to pass our challenges, Access Denied!'
+                )
             label_general_info.configure(
                 text='Access Denied ... !',
                 fg=DANGER,
