@@ -219,7 +219,7 @@ btn_spoof = tkinter.Button(
     relief=tkinter.RAISED,
     command=confirm_real,
 )
-btn_spoof.grid(row=0, column=0, padx=5, pady=5)
+btn_spoof.grid(row=0, column=0, padx=5)
 
 btn_start = tkinter.Button(
     btn_panel,
