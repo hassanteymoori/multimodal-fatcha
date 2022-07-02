@@ -27,17 +27,60 @@ DANGER = '#cc1c08'
 YELLOW = '#baa53d'
 LIGHTBLUE = '#48b1cf'
 
-def activate_webcam():
+
+def init_webcam():
     global cap
     cap = cv2.VideoCapture(0)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+
+
+def confirm_real():
+    init_webcam()
+    spoof_process()
+
+
+def activate_webcam():
+    init_webcam()
     label_general_info.configure(
         text="PRESS `s` to start the challenge",
         fg=INFO
     )
     btn_start.configure(state='disabled')
     visualize()
+
+
+def spoof_process():
+    success, frame = cap.read()
+
+    if success:
+        # frame = cv2.resize(frame, None, fx=0.7, fy=0.7, interpolation=cv2.INTER_CUBIC)
+        returned_frame, head_pose_class, results = face_mesh.detect(
+            cv2.flip(frame, 1),
+            with_pose_estimator=True
+        )
+
+        spoof_id, spoof_label = spoof_detector.detect(returned_frame, results)
+        spoof_text = "Face: "
+        if spoof_id != -1:
+            spoof_text += spoof_label
+            label_emotion_info.configure(text=spoof_text, fg=PRIMARY)
+        else:
+            spoof_text += ' Not detected!'
+            label_emotion_info.configure(text=spoof_text, fg=INFO)
+
+        img = PIL_ImageTk.PhotoImage(
+            image=PIL_Image.fromarray(
+                cv2.cvtColor(returned_frame, cv2.COLOR_BGR2RGB)
+            )
+        )
+        label_camera.configure(image=img, width=1280, height=720)
+        label_camera.image = img
+        label_camera.after(10, spoof_process)
+
+    else:
+        label_camera.image = ""
+        cap.release()
 
 
 def visualize():
@@ -56,15 +99,6 @@ def visualize():
         else:
             emotion_text += ' Unknown'
         label_emotion_info.configure(text=emotion_text)
-
-        spoof_id, spoof_label = spoof_detector.detect(frame, results)
-        spoof_text = "Face: "
-        if spoof_id != -1:
-            spoof_text += spoof_label
-            label_emotion_info.configure(text=spoof_text, fg=PRIMARY)
-        else:
-            spoof_text += ' Not detected!'
-            label_emotion_info.configure(text=spoof_text, fg=INFO)
 
         head_pose_text = f'Pose: {config.head_pose[head_pose_class]}' if head_pose_class != -1 else 'Pose: Unknown'
         label_pose_info.configure(text=head_pose_text)
@@ -156,8 +190,25 @@ window.geometry('1280x720')
 window.title("Multimodal Fatcha")
 window.columnconfigure(0, minsize=2)
 
-btn_start = tkinter.Button(window, text="Start the process", relief=tkinter.RAISED, command=activate_webcam)
-btn_start.grid(row=0, column=0, padx=5, pady=10)
+btn_panel = tkinter.Frame(window)
+btn_panel.grid(row=0, column=0, sticky="nsew", pady=10)
+
+btn_spoof = tkinter.Button(
+    btn_panel,
+    text="Spoof or Real!",
+    relief=tkinter.RAISED,
+    command=confirm_real,
+)
+btn_spoof.grid(row=0, column=0, padx=5, pady=5)
+
+btn_start = tkinter.Button(
+    btn_panel,
+    text="Start the Fatcha",
+    relief=tkinter.RAISED,
+    command=activate_webcam,
+    state='disabled'
+)
+btn_start.grid(row=1, column=0, padx=5, pady=10)
 
 right_panel = tkinter.Frame(window)
 right_panel.grid(row=0, column=1, sticky="nsew", pady=10)

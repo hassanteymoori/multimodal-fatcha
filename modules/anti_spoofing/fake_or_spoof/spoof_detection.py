@@ -18,7 +18,7 @@ class SpoofDetector:
 
         self.model = model_from_json(loaded_model_json)
         self.model.load_weights(
-            os.path.join(root_dir, 'fake_or_real.h5')
+            os.path.join(root_dir, 'antispoofing_model_10-0.916000.h5')
         )
         print("anti_spoofing model loaded.")
 
