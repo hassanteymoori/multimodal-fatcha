@@ -8,12 +8,14 @@ from modules.face_mesh import FaceMesh
 from modules.gesture.keypoint_classifier import KeyPointClassifier
 from modules.anti_spoofing.challenge.response import ChallengeResponse
 from modules.anti_spoofing.emotion.emotion_detection import EmotionDetector
+from modules.anti_spoofing.fake_or_spoof.spoof_detection import SpoofDetector
 
 face_mesh = FaceMesh()
 hand_landmarks = HandLandmark()
 key_points_classifier = KeyPointClassifier()
 emotion_detector = EmotionDetector()
 challenge = ChallengeResponse(config.challenge['number_of_challenges'])
+spoof_detector = SpoofDetector()
 
 cap = None  # To use a video file as input: cv2.VideoCapture("filename.mp4")
 WARNING = '#db7d09'
@@ -54,6 +56,15 @@ def visualize():
         else:
             emotion_text += ' Unknown'
         label_emotion_info.configure(text=emotion_text)
+
+        spoof_id, spoof_label = spoof_detector.detect(frame, results)
+        spoof_text = "Face: "
+        if spoof_id != -1:
+            spoof_text += spoof_label
+            label_emotion_info.configure(text=spoof_text, fg=PRIMARY)
+        else:
+            spoof_text += ' Not detected!'
+            label_emotion_info.configure(text=spoof_text, fg=INFO)
 
         head_pose_text = f'Pose: {config.head_pose[head_pose_class]}' if head_pose_class != -1 else 'Pose: Unknown'
         label_pose_info.configure(text=head_pose_text)
@@ -192,6 +203,16 @@ label_channel_info = tkinter.Label(
     padx=2,
 )
 label_channel_info.grid(row=1, column=0, sticky="nsew")
+
+label_spoof_info = tkinter.Label(
+    center_panel,
+    text="",
+    font=("Helvetica", 16),
+    padx=2,
+    fg="Green"
+)
+label_spoof_info.grid(row=3, column=0, sticky="nsew")
+
 
 label_icon = tkinter.Label(window, anchor='e')
 label_icon.grid(row=0, column=3, sticky="nsew")
