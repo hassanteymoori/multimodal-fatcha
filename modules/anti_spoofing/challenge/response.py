@@ -12,7 +12,7 @@ emoji_directory = os.path.join(root_dir, "emoji")
 
 class ChallengeResponse:
 
-    def __init__(self, number_of_questions=10):
+    def __init__(self, voice_assistant, number_of_questions=10):
         self.challenge_started = False
         self.current_question = 0
         self.number_of_questions = number_of_questions
@@ -27,6 +27,7 @@ class ChallengeResponse:
         self.current_time = 0
         self.time_per_question = 0
         self.timer_blinking = True
+        self.voice_assistant = voice_assistant
 
     def is_challenge_in_progress(self):
         return self.challenge_started and self.total_attempt <= config.challenge['allowed_attempt']
@@ -38,6 +39,11 @@ class ChallengeResponse:
             self.text = question['text']
             self.detected = False
             current_result = self.challenge_case(question['id'], interaction_data)
+            if self.voice_assistant.active and not self.voice_assistant.notified:
+                self.voice_assistant.notified = True
+                self.voice_assistant.stop_current_thread()
+                self.voice_assistant.synthesize_thread(question['text'])
+
             self.next_consecutive(question, current_result)
 
     def challenge_results(self, frame):
@@ -102,6 +108,7 @@ class ChallengeResponse:
             self.n_consecutive_frames += 1
             if self.n_consecutive_frames >= config.challenge['consecutive']:
                 self.next_question()
+                self.voice_assistant.notified = False
         else:
             self.n_consecutive_frames = 0
         return

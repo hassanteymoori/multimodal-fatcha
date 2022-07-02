@@ -15,6 +15,7 @@ class VoiceAssistant:
         )
         speech_config.speech_synthesis_voice_name = 'en-US-JennyNeural'
         self.active = True
+        self.notified = False
         self.speech_synthesizer = speechsdk.SpeechSynthesizer(
             speech_config=speech_config,
             audio_config=audio_config
@@ -44,6 +45,13 @@ class VoiceAssistant:
     def change_state(self):
         self.active = not self.active
 
+    def kill_previous_and_speak(self, text):
+        if self.active:
+            self.stop_current_thread()
+            self.synthesize_thread(
+                text
+            )
+
     def welcome(self):
         hour = int(datetime.datetime.now().hour)
         welcome_txt = ''
@@ -62,27 +70,9 @@ class VoiceAssistant:
         welcome_txt += " Be aware that, you won't be able to do anything unless to pass the procedure"
         self.synthesize_thread(welcome_txt)
 
-    # def takeCommand(self):
-    #     if not isinstance(self.recognizer, sr.Recognizer):
-    #         raise TypeError("`recognizer` must be `Recognizer` instance")
+    # def command(self, ):
     #
-    #     if not isinstance(self.microphone, sr.Microphone):
-    #         raise TypeError("`microphone` must be `Microphone` instance")
-    #     with sr.Microphone() as source:
-    #         print("Listening....")
-    #         self.recognizer.pause_threshold = 1
-    #         # recognizer.energy_threshold = 20
-    #         audio = self.recognizer.listen(source)
-    #     try:
-    #         print("Recognizing....")
-    #         self.query = self.recognizer.recognize_google(audio, language='en-in')
-    #         print(f"User said: {self.query}\n")
-    #
-    #     except Exception as e:
-    #         print("Say that again please...")
-    #         return "None"
-    #     return self.query
-    #
+
 
     def response(self):
 

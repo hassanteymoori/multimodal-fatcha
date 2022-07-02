@@ -15,9 +15,9 @@ face_mesh = FaceMesh()
 hand_landmarks = HandLandmark()
 key_points_classifier = KeyPointClassifier()
 emotion_detector = EmotionDetector()
-challenge = ChallengeResponse(config.challenge['number_of_challenges'])
-spoof_detector = SpoofDetector()
 voice_assistant = VoiceAssistant()
+challenge = ChallengeResponse(voice_assistant, config.challenge['number_of_challenges'])
+spoof_detector = SpoofDetector()
 
 cap = None  # To use a video file as input: cv2.VideoCapture("filename.mp4")
 WARNING = '#db7d09'
@@ -29,6 +29,8 @@ DANGER = '#cc1c08'
 YELLOW = '#baa53d'
 LIGHTBLUE = '#48b1cf'
 
+voice_assistant.welcome()
+
 
 def init_webcam():
     global cap
@@ -38,14 +40,21 @@ def init_webcam():
 
 
 def confirm_real():
+    txt = 'Try to be neutral in front of the camera, the procedure will take some seconds to be done;'
+    txt += ' We are kindly asking you to be patient during the procedure!'
+
+    voice_assistant.kill_previous_and_speak(txt)
     init_webcam()
     spoof_process()
 
 
 def activate_webcam():
     init_webcam()
+    txt = 'PRESS `s` to start the challenge'
+    voice_assistant.kill_previous_and_speak(txt)
+
     label_general_info.configure(
-        text="PRESS `s` to start the challenge",
+        text=txt,
         fg=INFO
     )
     btn_start.configure(state='disabled')
@@ -71,6 +80,10 @@ def spoof_process():
             btn_spoof.destroy()
             btn_start.configure(state='normal')
             label_spoof_info.destroy()
+            txt = 'You have been recognized as a real identity, so we let you to use the system! '
+            txt += 'Press `start the Fatcha` please!'
+            voice_assistant.kill_previous_and_speak(txt)
+
         else:
             if spoof_detector.n_consecutive_frames >= 1:
                 label_emotion_info.configure(text="Alert: possible spoofing!", fg='red')
@@ -81,6 +94,12 @@ def spoof_process():
                 label_camera.image = ""
                 cap.release()
                 label_emotion_info.configure(text="SPOOFING: You can not use the system", fg='red')
+                voice_assistant.kill_previous_and_speak(
+                    'You have been recognized as a real identity, so we let you to use the system! '
+                )
+                voice_assistant.kill_previous_and_speak(
+                    'We are really sorry to say that it seems you are trying to foul the system!'
+                )
                 btn_spoof.configure(state='disabled')
 
             spoof_text = "Face: "
@@ -146,7 +165,7 @@ def visualize():
                 "hand_class_label": hand_class_label,
                 "gesture_class_id": gesture_class_id,
                 'emotion_class_id': emotion_class_id
-            }
+            },
         )
 
         if challenge.is_challenge_in_progress():
@@ -216,8 +235,11 @@ def start_ch(e):
     if cap is not None and cap.isOpened():
         challenge.start_challenge()
     else:
+        txt = 'Warning: You need to start the FATCHA first!'
+        voice_assistant.stop_current_thread()
+        voice_assistant.synthesize_thread(txt)
         label_general_info.configure(
-            text="Warning: You need to start the FATCHA first!",
+            text=txt,
             fg=WARNING
         )
 
@@ -238,7 +260,6 @@ def voice_channel(e=''):
         )
 
 
-voice_assistant.welcome()
 window = tkinter.Tk()
 window.geometry('1280x720')
 window.title("Multimodal Fatcha")
