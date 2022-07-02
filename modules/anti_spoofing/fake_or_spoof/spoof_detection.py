@@ -21,6 +21,24 @@ class SpoofDetector:
             os.path.join(root_dir, 'antispoofing_model_10-0.916000.h5')
         )
         print("anti_spoofing model loaded.")
+        self.n_consecutive_frames = 0
+        self.detected = False
+        self.text = ''
+        self.result = False
+        self.total = 0
+
+    def next_consecutive(self, current_result):
+        if current_result == 1:
+            self.detected = True
+            self.text = 'Possible spoof attach'
+            self.n_consecutive_frames += 1
+            if self.n_consecutive_frames >= 25:
+                self.result = True
+        else:
+            self.n_consecutive_frames = 0
+            if current_result == 0:
+                self.total += 1
+        return
 
     def detect(self, frame, results):
         if results.multi_face_landmarks:

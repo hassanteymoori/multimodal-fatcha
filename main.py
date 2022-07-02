@@ -61,13 +61,33 @@ def spoof_process():
         )
 
         spoof_id, spoof_label = spoof_detector.detect(returned_frame, results)
-        spoof_text = "Face: "
-        if spoof_id != -1:
-            spoof_text += spoof_label
-            label_emotion_info.configure(text=spoof_text, fg=PRIMARY)
+        spoof_detector.next_consecutive(spoof_id)
+        if spoof_detector.total >= 100:
+            label_camera.image = ""
+            cap.release()
+            label_general_info.configure(text="Real identity: You can  use the system", fg='Green')
+            btn_spoof.destroy()
+            btn_start.configure(state='normal')
+            label_spoof_info.destroy()
         else:
-            spoof_text += ' Not detected!'
-            label_emotion_info.configure(text=spoof_text, fg=INFO)
+            if spoof_detector.n_consecutive_frames >= 1:
+                label_emotion_info.configure(text="Alert: possible spoofing!", fg='red')
+            else:
+                label_emotion_info.configure(text="")
+
+            if spoof_detector.result:
+                label_camera.image = ""
+                cap.release()
+                label_emotion_info.configure(text="SPOOFING: You can not use the system", fg='red')
+                btn_spoof.configure(state='disabled')
+
+            spoof_text = "Face: "
+            if spoof_id != -1:
+                spoof_text += spoof_label
+                label_spoof_info.configure(text=spoof_text, fg=PRIMARY)
+            else:
+                spoof_text += ' Not detected!'
+                label_spoof_info.configure(text=spoof_text, fg=INFO)
 
         img = PIL_ImageTk.PhotoImage(
             image=PIL_Image.fromarray(
