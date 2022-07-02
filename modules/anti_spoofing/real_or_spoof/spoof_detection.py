@@ -67,7 +67,7 @@ class SpoofDetector:
                     roi = np.expand_dims(roi, axis=0)
                     # cv2.rectangle(frame, (cx_min, cy_min), (cx_max,  cy_max), (255, 0, 0), 2)
                     prediction = self.model.predict(roi, verbose=0)[0]
-                    if prediction > 0.5:
+                    if prediction > 0.8:
                         class_id = 1
                         label = 'spoof'
                     else:
