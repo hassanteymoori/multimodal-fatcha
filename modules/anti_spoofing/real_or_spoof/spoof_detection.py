@@ -30,7 +30,7 @@ class SpoofDetector:
     def next_consecutive(self, current_result):
         if current_result == 1:
             self.detected = True
-            self.text = 'Possible spoof attach'
+            self.text = 'Possible spoof attack'
             self.n_consecutive_frames += 1
             if self.n_consecutive_frames >= 25:
                 self.result = True
