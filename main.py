@@ -9,6 +9,7 @@ from modules.gesture.keypoint_classifier import KeyPointClassifier
 from modules.anti_spoofing.challenge.response import ChallengeResponse
 from modules.anti_spoofing.emotion.emotion_detection import EmotionDetector
 from modules.anti_spoofing.fake_or_spoof.spoof_detection import SpoofDetector
+from modules.voice_assistant import VoiceAssistant
 
 face_mesh = FaceMesh()
 hand_landmarks = HandLandmark()
@@ -16,6 +17,7 @@ key_points_classifier = KeyPointClassifier()
 emotion_detector = EmotionDetector()
 challenge = ChallengeResponse(config.challenge['number_of_challenges'])
 spoof_detector = SpoofDetector()
+voice_assistant = VoiceAssistant()
 
 cap = None  # To use a video file as input: cv2.VideoCapture("filename.mp4")
 WARNING = '#db7d09'
@@ -143,7 +145,7 @@ def visualize():
                 "head_pose_class": head_pose_class,
                 "hand_class_label": hand_class_label,
                 "gesture_class_id": gesture_class_id,
-                'emotion_class_id' : emotion_class_id
+                'emotion_class_id': emotion_class_id
             }
         )
 
@@ -205,13 +207,54 @@ def visualize():
         cap.release()
 
 
+# Define an event to close the window
+def close_win(e):
+    window.destroy()
+
+
+def start_ch(e):
+    if cap is not None and cap.isOpened():
+        challenge.start_challenge()
+    else:
+        label_general_info.configure(
+            text="Warning: You need to start the FATCHA first!",
+            fg=WARNING
+        )
+
+
+def voice_channel(e=''):
+    voice_assistant.stop_current_thread()
+    if voice_assistant.active:
+        voice_assistant.change_state()
+        btn_voice.configure(text='voice disabled!', fg=BROWN)
+        voice_assistant.synthesize_thread(
+            'Voice channel deactivated! You can activate it anytime by pressing v again'
+        )
+    else:
+        voice_assistant.change_state()
+        btn_voice.configure(text='Voice activated!', fg=GREEN)
+        voice_assistant.synthesize_thread(
+            'Voice channel activated! You can de-activate it anytime by pressing v again'
+        )
+
+
+voice_assistant.welcome()
 window = tkinter.Tk()
 window.geometry('1280x720')
 window.title("Multimodal Fatcha")
 window.columnconfigure(0, minsize=2)
 
 btn_panel = tkinter.Frame(window)
-btn_panel.grid(row=0, column=0, sticky="nsew", pady=10)
+btn_panel.grid(row=0, column=0, sticky="nsew")
+
+btn_voice = tkinter.Button(
+    btn_panel,
+    text="Voice is active!",
+    relief=tkinter.RAISED,
+    command=voice_channel,
+    fg=GREEN
+)
+btn_voice.grid(row=0, column=0, padx=5)
 
 btn_spoof = tkinter.Button(
     btn_panel,
@@ -219,7 +262,7 @@ btn_spoof = tkinter.Button(
     relief=tkinter.RAISED,
     command=confirm_real,
 )
-btn_spoof.grid(row=0, column=0, padx=5)
+btn_spoof.grid(row=1, column=0, padx=5)
 
 btn_start = tkinter.Button(
     btn_panel,
@@ -228,7 +271,7 @@ btn_start = tkinter.Button(
     command=activate_webcam,
     state='disabled'
 )
-btn_start.grid(row=1, column=0, padx=5, pady=10)
+btn_start.grid(row=2, column=0, padx=5)
 
 right_panel = tkinter.Frame(window)
 right_panel.grid(row=0, column=1, sticky="nsew", pady=10)
@@ -284,32 +327,15 @@ label_spoof_info = tkinter.Label(
 )
 label_spoof_info.grid(row=3, column=0, sticky="nsew")
 
-
 label_icon = tkinter.Label(window, anchor='e')
 label_icon.grid(row=0, column=3, sticky="nsew")
 
 label_camera = tkinter.Label(window)
 label_camera.grid(row=1, column=0, columnspan=4, sticky="nsew")
 
-
-# Define an event to close the window
-def close_win(e):
-    window.destroy()
-
-
-def start_ch(e):
-    if cap is not None and cap.isOpened():
-        challenge.start_challenge()
-    else:
-        label_general_info.configure(
-            text="Warning: You need to start the FATCHA first!",
-            fg=WARNING
-        )
-
-
 # Bind the ESC and q keys with the callback function
 window.bind('<Escape>', lambda event: close_win(event))
 window.bind('q', lambda event: close_win(event))
 window.bind('s', lambda event: start_ch(event))
-
+window.bind('v', lambda event: voice_channel(event))
 window.mainloop()

@@ -54,3 +54,9 @@ emotion = [ # happy, angry, surprise, neutral
     'Sad',
     'Surprise'
 ]
+
+
+azure = {
+    'key': '75a739340271489f8bb818e34a38981c',
+    'region': 'eastus',
+}
