@@ -154,3 +154,17 @@ class VoiceAssistant:
                 self.active = False
                 self.synthesize_thread('voice output channel deactivated!')
             return 0
+        spoofing = 'start the spoofing process.'
+        spoofing += ' start spoofing process.'
+        spoofing += ' start spoofing process.'
+        spoofing += ' start anti-spoofing process.'
+        spoofing += ' Start anti spoofing.'
+        spoofing += ' check anti spoofing.'
+        if re.search(result, 'ok thank you, Okey thanks, ok thanks a lot', re.IGNORECASE):
+            self.stop_current_thread()
+            self.synthesize_thread('You"re welcome!')
+        if re.search(result, spoofing, re.IGNORECASE):
+            return 2
+        if re.search(result, 'start the challenge. start challenge. ', re.IGNORECASE):
+            return 3
+        return 4

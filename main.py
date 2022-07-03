@@ -279,6 +279,17 @@ def listening(e=''):
         match result:
             case 1:
                 return window.destroy()
+            case 2:
+                return confirm_real()
+            case 3:
+                return start_ch('')
+            case 4:
+                voice_assistant.stop_current_thread()
+                voice_assistant.synthesize_thread(
+                    'The given command has not been defined in this system!'
+                )
+            case _ :
+                return
 
 
 window = tkinter.Tk()
