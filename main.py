@@ -311,11 +311,6 @@ def help_win():
     top = tkinter.Toplevel(window)
     top.title("About")
     top.resizable(False, False)
-    ttk.Label(
-        top,
-        justify=tkinter.LEFT,
-        text="You can find the list of commands here"
-    ).pack(padx=5, pady=2)
 
     top.columnconfigure(0, weight=1)
     top.columnconfigure(1, weight=3)
@@ -324,7 +319,32 @@ def help_win():
     ttk.Label(top, text="<Escape> or q").grid(column=0, row=0, sticky=tkinter.W, padx=5, pady=5)
     ttk.Label(top, text="Exit from the app").grid(column=1, row=0, sticky=tkinter.E, padx=5, pady=5)
 
-
+    # voice output channel
+    ttk.Label(top, text="v").grid(column=0, row=1, sticky=tkinter.W, padx=5, pady=5)
+    ttk.Label(top, text="to activate/deactivate voice OUTPUT channel").grid(
+        column=1,
+        row=1,
+        sticky=tkinter.E,
+        padx=5,
+        pady=5
+    )
+    # voice input channel
+    ttk.Label(top, text="l").grid(column=0, row=2, sticky=tkinter.W, padx=5, pady=5)
+    ttk.Label(top, text="to activate/deactivate voice INPUT channel").grid(
+        column=1,
+        row=2,
+        sticky=tkinter.E,
+        padx=5,
+        pady=5
+    )
+    ttk.Label(top, text="s").grid(column=0, row=3, sticky=tkinter.W, padx=5, pady=5)
+    ttk.Label(top, text="to start the challenge").grid(
+        column=1,
+        row=3,
+        sticky=tkinter.E,
+        padx=5,
+        pady=5
+    )
 
     ttk.Button(top, text='OK', width=10, command=top.destroy).pack(pady=8)
     top.transient(window)
