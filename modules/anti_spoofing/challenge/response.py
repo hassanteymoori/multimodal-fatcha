@@ -4,6 +4,7 @@ import random
 import sys
 import config
 import cv2
+
 sys.path.append('../../../')
 
 root_dir = os.path.dirname(__file__)
@@ -388,7 +389,6 @@ class ChallengeResponse:
             return True
         else:
             return False
-
 
     def challenge_case(self, status, interaction_date):
         match status:

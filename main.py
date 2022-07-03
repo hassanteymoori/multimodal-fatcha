@@ -10,6 +10,7 @@ from modules.anti_spoofing.challenge.response import ChallengeResponse
 from modules.anti_spoofing.emotion.emotion_detection import EmotionDetector
 from modules.anti_spoofing.fake_or_spoof.spoof_detection import SpoofDetector
 from modules.voice_assistant import VoiceAssistant
+import random
 
 face_mesh = FaceMesh()
 hand_landmarks = HandLandmark()
@@ -260,14 +261,24 @@ def voice_channel(e=''):
         voice_assistant.change_state()
         btn_voice.configure(text='voice disabled!', fg=BROWN)
         voice_assistant.synthesize_thread(
-            'Voice channel deactivated! You can activate it anytime by pressing v again'
+            'Voice output channel deactivated! You can activate it anytime by pressing v again'
         )
     else:
         voice_assistant.change_state()
         btn_voice.configure(text='Voice activated!', fg=GREEN)
         voice_assistant.synthesize_thread(
-            'Voice channel activated! You can de-activate it anytime by pressing v again'
+            'Voice output channel activated! You can de-activate it anytime by pressing v again'
         )
+
+
+def listening(e=''):
+    voice_assistant.stop_current_thread()
+    result = voice_assistant.listen_and_process()
+    print(result)
+    if result != 0:
+        match result:
+            case 1:
+                return window.destroy()
 
 
 window = tkinter.Tk()
@@ -285,7 +296,16 @@ btn_voice = tkinter.Button(
     command=voice_channel,
     fg=GREEN
 )
-btn_voice.grid(row=0, column=0, padx=5)
+btn_voice.grid(row=0, column=0)
+#
+# btn_voice = tkinter.Button(
+#     btn_panel,
+#     text="Voice is active!",
+#     relief=tkinter.RAISED,
+#     command=voice_channel,
+#     fg=GREEN
+# )
+# btn_voice.grid(row=0, column=1)
 
 btn_spoof = tkinter.Button(
     btn_panel,
@@ -369,4 +389,5 @@ window.bind('<Escape>', lambda event: close_win(event))
 window.bind('q', lambda event: close_win(event))
 window.bind('s', lambda event: start_ch(event))
 window.bind('v', lambda event: voice_channel(event))
+window.bind('l', lambda event: listening(event))
 window.mainloop()
