@@ -70,13 +70,3 @@ class VoiceAssistant:
         welcome_txt += ' The spoofing detection procedure will be started by Press the ` Spoof or Real!`'
         welcome_txt += " Be aware that, you won't be able to do anything unless to pass the procedure"
         self.synthesize_thread(welcome_txt)
-
-    # def command(self, ):
-    #
-
-
-    def response(self):
-
-        if 'ready' in self.query:
-            self.speak(
-                'You have chosen the voice communication. At the first step we kindly want you to show the demanded sticker with your hand in front of the camera ')
