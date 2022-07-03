@@ -11,6 +11,7 @@ from modules.anti_spoofing.emotion.emotion_detection import EmotionDetector
 from modules.anti_spoofing.fake_or_spoof.spoof_detection import SpoofDetector
 from modules.voice_assistant import VoiceAssistant
 from tkinter import ttk
+import os
 
 face_mesh = FaceMesh()
 hand_landmarks = HandLandmark()
@@ -355,8 +356,8 @@ def help_win():
 window = tkinter.Tk()
 window.resizable(False, False)
 window.style = ttk.Style()
-window.style.theme_use("clam") # ('clam', 'alt', 'default', 'classic')
-window.geometry('1280x720')
+window.style.theme_use("clam")  # ('clam', 'alt', 'default', 'classic')
+window.geometry('1280x815')
 window.title("Multimodal Fatcha")
 window.columnconfigure(0, minsize=2)
 
@@ -461,6 +462,17 @@ label_icon.grid(row=0, column=3, sticky="nsew")
 
 label_camera = tkinter.Label(window)
 label_camera.grid(row=1, column=0, columnspan=4, sticky="nsew")
+
+cv2_img = cv2.resize(
+    cv2.imread(os.path.join(os.path.dirname(__file__), 'background.jpeg')), (720, 480)
+)
+img = PIL_ImageTk.PhotoImage(
+    image=PIL_Image.fromarray(
+        cv2.cvtColor(cv2_img, cv2.COLOR_BGR2RGB)
+    )
+)
+label_camera.configure(image=img, width=1280, height=720)
+label_camera.image = img
 
 # Bind the ESC and q keys with the callback function
 window.bind('<Escape>', lambda event: close_win(event))
