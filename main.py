@@ -308,27 +308,53 @@ def listening(e=''):
 
 
 def help_win():
-    help_window = tkinter.Toplevel(window)
-    help_window.title('help ?')
-    tkinter.Label(help_window, text="This is a new window").pack()
+    top = tkinter.Toplevel(window)
+    top.title("About")
+    top.resizable(False, False)
+    ttk.Label(
+        top,
+        justify=tkinter.LEFT,
+        text="You can find the list of commands here"
+    ).pack(padx=5, pady=2)
+
+    top.columnconfigure(0, weight=1)
+    top.columnconfigure(1, weight=3)
+
+    # exit
+    ttk.Label(top, text="<Escape> or q").grid(column=0, row=0, sticky=tkinter.W, padx=5, pady=5)
+    ttk.Label(top, text="Exit from the app").grid(column=1, row=0, sticky=tkinter.E, padx=5, pady=5)
+
+
+
+    ttk.Button(top, text='OK', width=10, command=top.destroy).pack(pady=8)
+    top.transient(window)
+    top.grab_set()
+    window.wait_window(top)
 
 
 window = tkinter.Tk()
 window.resizable(False, False)
+window.style = ttk.Style()
+window.style.theme_use("clam") # ('clam', 'alt', 'default', 'classic')
 window.geometry('1280x720')
 window.title("Multimodal Fatcha")
 window.columnconfigure(0, minsize=2)
 
+menu = tkinter.Menu(window)
+window.config(menu=menu)
+fm = tkinter.Menu(menu, tearoff=0)
+menu.add_cascade(label="Settings", menu=fm)
+fm.add_command(label="Preferences")
+fm.add_command(label="Activate Voice", command=voice_channel)
+
+hm = tkinter.Menu(menu, tearoff=0)
+menu.add_cascade(label="Help", menu=hm)
+hm.add_command(label="About", command=about_window)
+hm.add_command(label="Help", command=help_win)
+hm.add_command(label="Exit", command=window.quit)
+
 btn_panel = tkinter.Frame(window)
 btn_panel.grid(row=0, column=0, sticky="nsew")
-
-btn_help = tkinter.Button(
-    btn_panel,
-    text="help",
-    relief=tkinter.RAISED,
-    command=help_win,
-)
-btn_help.grid(row=0, column=0)
 
 btn_voice = tkinter.Button(
     btn_panel,
@@ -337,7 +363,7 @@ btn_voice = tkinter.Button(
     command=voice_channel,
     fg=GREEN
 )
-btn_voice.grid(row=1, column=0)
+btn_voice.grid(row=0, column=0)
 
 btn_spoof = tkinter.Button(
     btn_panel,
@@ -345,7 +371,7 @@ btn_spoof = tkinter.Button(
     relief=tkinter.RAISED,
     command=confirm_real,
 )
-btn_spoof.grid(row=2, column=0, padx=5)
+btn_spoof.grid(row=1, column=0, padx=5)
 
 btn_start = tkinter.Button(
     btn_panel,
@@ -354,7 +380,7 @@ btn_start = tkinter.Button(
     command=activate_webcam,
     state='disabled'
 )
-btn_start.grid(row=3, column=0, padx=5)
+btn_start.grid(row=2, column=0, padx=5)
 
 right_panel = tkinter.Frame(window)
 right_panel.grid(row=0, column=1, sticky="nsew", pady=10)
