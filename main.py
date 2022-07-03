@@ -10,7 +10,7 @@ from modules.anti_spoofing.challenge.response import ChallengeResponse
 from modules.anti_spoofing.emotion.emotion_detection import EmotionDetector
 from modules.anti_spoofing.fake_or_spoof.spoof_detection import SpoofDetector
 from modules.voice_assistant import VoiceAssistant
-import random
+from tkinter import ttk
 
 face_mesh = FaceMesh()
 hand_landmarks = HandLandmark()
@@ -31,6 +31,21 @@ YELLOW = '#baa53d'
 LIGHTBLUE = '#48b1cf'
 
 voice_assistant.welcome()
+
+
+def about_window():
+    top2 = tkinter.Toplevel(window)
+    top2.title("About")
+    top2.resizable(False, False)
+
+    explanation = "This is a project  related to the \n Multimodal interaction course"
+
+    ttk.Label(top2, justify=tkinter.LEFT, text=explanation).pack(padx=5, pady=2)
+    ttk.Button(top2, text='OK', width=10, command=top2.destroy).pack(pady=8)
+
+    top2.transient(window)
+    top2.grab_set()
+    window.wait_window(top2)
 
 
 def init_webcam():
@@ -288,17 +303,32 @@ def listening(e=''):
                 voice_assistant.synthesize_thread(
                     'The given command has not been defined in this system!'
                 )
-            case _ :
+            case _:
                 return
 
 
+def help_win():
+    help_window = tkinter.Toplevel(window)
+    help_window.title('help ?')
+    tkinter.Label(help_window, text="This is a new window").pack()
+
+
 window = tkinter.Tk()
+window.resizable(False, False)
 window.geometry('1280x720')
 window.title("Multimodal Fatcha")
 window.columnconfigure(0, minsize=2)
 
 btn_panel = tkinter.Frame(window)
 btn_panel.grid(row=0, column=0, sticky="nsew")
+
+btn_help = tkinter.Button(
+    btn_panel,
+    text="help",
+    relief=tkinter.RAISED,
+    command=help_win,
+)
+btn_help.grid(row=0, column=0)
 
 btn_voice = tkinter.Button(
     btn_panel,
@@ -307,16 +337,7 @@ btn_voice = tkinter.Button(
     command=voice_channel,
     fg=GREEN
 )
-btn_voice.grid(row=0, column=0)
-#
-# btn_voice = tkinter.Button(
-#     btn_panel,
-#     text="Voice is active!",
-#     relief=tkinter.RAISED,
-#     command=voice_channel,
-#     fg=GREEN
-# )
-# btn_voice.grid(row=0, column=1)
+btn_voice.grid(row=1, column=0)
 
 btn_spoof = tkinter.Button(
     btn_panel,
@@ -324,7 +345,7 @@ btn_spoof = tkinter.Button(
     relief=tkinter.RAISED,
     command=confirm_real,
 )
-btn_spoof.grid(row=1, column=0, padx=5)
+btn_spoof.grid(row=2, column=0, padx=5)
 
 btn_start = tkinter.Button(
     btn_panel,
@@ -333,7 +354,7 @@ btn_start = tkinter.Button(
     command=activate_webcam,
     state='disabled'
 )
-btn_start.grid(row=2, column=0, padx=5)
+btn_start.grid(row=3, column=0, padx=5)
 
 right_panel = tkinter.Frame(window)
 right_panel.grid(row=0, column=1, sticky="nsew", pady=10)
