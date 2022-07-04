@@ -18,7 +18,10 @@ class SpoofDetector:
 
         self.model = model_from_json(loaded_model_json)
         self.model.load_weights(
-            os.path.join(root_dir, 'antispoofing_model_10-0.916000.h5')
+            os.path.join(root_dir, 'fake_or_real.h5')
+        )
+        self.face_detector = cv2.CascadeClassifier(
+            os.path.join(root_dir, "haarcascade_frontalface_default.xml")
         )
         print("anti_spoofing model loaded.")
         self.n_consecutive_frames = 0
@@ -40,7 +43,37 @@ class SpoofDetector:
                 self.total += 1
         return
 
-    def detect(self, frame, results):
+    def detect(self, frame):
+        faces = self.face_detector.detectMultiScale(
+            cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY),
+            1.3, 5
+        )
+        for (x, y, w, h) in faces:
+            face = frame[y - 5:y + h + 5, x - 5:x + w + 5]
+            roi_face = cv2.resize(face, (160, 160))
+            roi_face = roi_face.astype("float") / 255.0
+            roi_face = np.expand_dims(roi_face, axis=0)
+            prediction = self.model.predict(roi_face, verbose=0)[0]
+            if prediction > 0.2:
+                class_id = 1
+                label = 'spoof'
+
+                cv2.putText(frame, label, (x, y - 10),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+                cv2.rectangle(frame, (x, y), (x + w, y + h),
+                              (0, 0, 255), 2)
+                return class_id, label
+            else:
+                class_id = 0
+                label = 'real'
+                cv2.putText(frame, label, (x, y - 10),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                cv2.rectangle(frame, (x, y), (x + w, y + h),
+                              (0, 255, 0), 2)
+                return class_id, label
+        return -1, 'No face, try to change pose in order to detect your face'
+
+    def detect_mediapipe(self, frame, results):
         if results.multi_face_landmarks:
             for face_landmarks in results.multi_face_landmarks:
                 h, w, c = frame.shape

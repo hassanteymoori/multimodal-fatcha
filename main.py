@@ -82,13 +82,7 @@ def spoof_process():
     success, frame = cap.read()
 
     if success:
-        # frame = cv2.resize(frame, None, fx=0.7, fy=0.7, interpolation=cv2.INTER_CUBIC)
-        returned_frame, head_pose_class, results = face_mesh.detect(
-            cv2.flip(frame, 1),
-            with_pose_estimator=True
-        )
-
-        spoof_id, spoof_label = spoof_detector.detect(returned_frame, results)
+        spoof_id, spoof_label = spoof_detector.detect(frame)
         spoof_detector.next_consecutive(spoof_id)
         if spoof_detector.total >= 100:
             label_camera.image = ""
@@ -124,12 +118,12 @@ def spoof_process():
                 spoof_text += spoof_label
                 label_spoof_info.configure(text=spoof_text, fg=PRIMARY)
             else:
-                spoof_text += ' Not detected!'
+                spoof_text += spoof_label
                 label_spoof_info.configure(text=spoof_text, fg=INFO)
 
         img = PIL_ImageTk.PhotoImage(
             image=PIL_Image.fromarray(
-                cv2.cvtColor(returned_frame, cv2.COLOR_BGR2RGB)
+                cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             )
         )
         label_camera.configure(image=img, width=1280, height=720)
