@@ -4,6 +4,7 @@ import random
 import sys
 import config
 import cv2
+
 sys.path.append('../../../')
 
 root_dir = os.path.dirname(__file__)
@@ -12,7 +13,7 @@ emoji_directory = os.path.join(root_dir, "emoji")
 
 class ChallengeResponse:
 
-    def __init__(self, number_of_questions=10):
+    def __init__(self, voice_assistant, number_of_questions=10):
         self.challenge_started = False
         self.current_question = 0
         self.number_of_questions = number_of_questions
@@ -27,6 +28,7 @@ class ChallengeResponse:
         self.current_time = 0
         self.time_per_question = 0
         self.timer_blinking = True
+        self.voice_assistant = voice_assistant
 
     def is_challenge_in_progress(self):
         return self.challenge_started and self.total_attempt <= config.challenge['allowed_attempt']
@@ -38,6 +40,11 @@ class ChallengeResponse:
             self.text = question['text']
             self.detected = False
             current_result = self.challenge_case(question['id'], interaction_data)
+            if self.voice_assistant.active and not self.voice_assistant.notified:
+                self.voice_assistant.notified = True
+                self.voice_assistant.stop_current_thread()
+                self.voice_assistant.synthesize_thread(question['text'])
+
             self.next_consecutive(question, current_result)
 
     def challenge_results(self, frame):
@@ -102,6 +109,7 @@ class ChallengeResponse:
             self.n_consecutive_frames += 1
             if self.n_consecutive_frames >= config.challenge['consecutive']:
                 self.next_question()
+                self.voice_assistant.notified = False
         else:
             self.n_consecutive_frames = 0
         return
@@ -111,6 +119,7 @@ class ChallengeResponse:
         if self.current_question == (self.number_of_questions - 1):
             self.challenge_result = True
             self.challenge_started = False
+            self.voice_assistant.notified = False
 
         self.n_consecutive_frames = 0
         self.current_question += 1
@@ -159,6 +168,15 @@ class ChallengeResponse:
                 )
         else:
             self.challenge_failed()
+            desc = 'Total attempts are ' + str(self.total_attempt)
+
+            if self.total_attempt == 3:
+                desc += ' times; This is your LAST CHANCE! be careful!'
+            else:
+                desc += ' times; You can try ' + str(
+                    config.challenge["allowed_attempt"] - self.total_attempt) + ' more times'
+            if self.is_on_going():
+                self.voice_assistant.kill_previous_and_speak(desc)
 
     def _random_questions(self, number):
         questions = self._questions()
@@ -371,7 +389,6 @@ class ChallengeResponse:
             return True
         else:
             return False
-
 
     def challenge_case(self, status, interaction_date):
         match status:

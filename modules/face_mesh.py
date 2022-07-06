@@ -19,7 +19,7 @@ class FaceMesh:
             min_detection_confidence=self.min_detection_confidence
         )
 
-    def detect(self, frame ,with_pose_estimator=False):
+    def detect(self, frame, with_pose_estimator=False):
         frame.flags.writeable = False
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         results = self.face_mesh.process(frame)
@@ -34,7 +34,7 @@ class FaceMesh:
             for face_landmarks in results.multi_face_landmarks:
                 self._draw_landmarks(frame, face_landmarks)
 
-        return frame, 5 , results # default class which is forward
+        return frame, 5, results  # default class which is forward
 
     def face_with_head_pose_estimator(self, frame, results):
         head_pose_class = -1  # default is forward
@@ -46,7 +46,6 @@ class FaceMesh:
             for face_landmarks in results.multi_face_landmarks:
                 for landmark_index, landmark in enumerate(face_landmarks.landmark):
                     if landmark_index in config.face["special_points_join"]:
-
                         x, y = int(landmark.x * frame_width), int(landmark.y * frame_height)
 
                         # Get the 2D Coordinates
@@ -77,31 +76,31 @@ class FaceMesh:
                 success, rot_vec, trans_vec = cv2.solvePnP(face_3d, face_2d, cam_matrix, dist_matrix)
 
                 # Get rotational matrix
-                rmat, jac = cv2.Rodrigues(rot_vec)
+                rotational_matrix, jac = cv2.Rodrigues(rot_vec)
 
                 # Get angles
-                angles, mtxR, mtxQ, Qx, Qy, Qz = cv2.RQDecomp3x3(rmat)
+                results_rq = cv2.RQDecomp3x3(rotational_matrix)
+                angles = results_rq[0]
 
                 # Get the y rotation degree
                 x = angles[0] * 360
                 y = angles[1] * 360
 
-                # See where the user"s head tilting
+                # See where the user's head tilting
                 if y < -10:
-                    head_pose_class = 1
+                    head_pose_class = 1  # Looking left
                 elif y > 10:
-                    head_pose_class = 2
+                    head_pose_class = 2  # Looking right
                 elif x < -10:
-                    head_pose_class = 3
+                    head_pose_class = 3  # Looking down
                 elif x > 10:
-                    head_pose_class = 4
+                    head_pose_class = 4  # Looking up
                 else:
-                    head_pose_class = 5
+                    head_pose_class = 5  # Looking forward
 
                 self._draw_landmarks(frame, face_landmarks)
 
         return frame, head_pose_class, results
-
 
     def _draw_landmarks(self, frame, face_landmarks):
         self.mp_drawing.draw_landmarks(
