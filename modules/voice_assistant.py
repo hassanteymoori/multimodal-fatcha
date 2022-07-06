@@ -129,8 +129,7 @@ class VoiceAssistant:
                 confirm = self._listening()
                 if re.search(confirm, 'Yes, sure, absolutely, of course, yeah, yes please!', re.IGNORECASE):
                     self.stop_current_thread()
-                    self.active = False
-                    self.synthesize_thread('voice output channel deactivated!')
+                    return 5
             else:
                 self.stop_current_thread()
                 self.active = True
@@ -145,9 +144,8 @@ class VoiceAssistant:
                 confirm = self._listening()
                 if re.search(confirm, 'Yes, sure, absolutely, of course, yeah, yes please! yes thank you',
                              re.IGNORECASE):
-                    self.stop_current_thread()
-                    self.active = True
-                    self.synthesize_thread('voice output channel activated!')
+                    return 5
+
                 return 0
             else:
                 self.stop_current_thread()

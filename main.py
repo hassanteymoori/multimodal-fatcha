@@ -84,7 +84,7 @@ def spoof_process():
     if success:
         spoof_id, spoof_label = spoof_detector.detect(frame)
         spoof_detector.next_consecutive(spoof_id)
-        if spoof_detector.total >= 100:
+        if not spoof_detector.result and spoof_detector.total >= 100:
             label_camera.image = ""
             cap.release()
             label_general_info.configure(text="Real identity: You can  use the system", fg='Green')
@@ -105,9 +105,7 @@ def spoof_process():
                 label_camera.image = ""
                 cap.release()
                 label_emotion_info.configure(text="SPOOFING: You can not use the system", fg='red')
-                voice_assistant.kill_previous_and_speak(
-                    'You have been recognized as a real identity, so we let you to use the system! '
-                )
+
                 voice_assistant.kill_previous_and_speak(
                     'We are really sorry to say that it seems you are trying to foul the system!'
                 )
@@ -298,6 +296,8 @@ def listening(e=''):
                 voice_assistant.synthesize_thread(
                     'The given command has not been defined in this system!'
                 )
+            case 5:
+                return voice_channel('')
             case _:
                 return
 
@@ -340,15 +340,74 @@ def help_win():
         padx=5,
         pady=5
     )
+    ttk.Label(top, text="").grid(
+        column=0,
+        row=4,
+        columnspan=2,
+        sticky=tkinter.E,
+        pady=10
+    )
+    ttk.Label(top, text="THE LIST OF POSSIBLE VOICE COMMANDS ARE THE FOLLOWING:").grid(
+        column=0,
+        row=5,
+        columnspan=2,
+        sticky=tkinter.E,
+        padx=5,
+        pady=5
+    )
+    ttk.Label(top, text="Hello, Hi, Hey").grid(column=0, row=6, sticky=tkinter.W, padx=5, pady=5)
+    ttk.Label(top, text="Just for fun!").grid(
+        column=1,
+        row=6,
+        sticky=tkinter.E,
+        padx=5,
+        pady=5
+    )
 
-    ttk.Button(top, text='OK', width=10, command=top.destroy).pack(pady=8)
+    ttk.Label(top, text="exit").grid(column=0, row=7, sticky=tkinter.W, padx=5, pady=5)
+    ttk.Label(top, text="to close the application entirely").grid(
+        column=1,
+        row=7,
+        sticky=tkinter.E,
+        padx=5,
+        pady=5
+    )
+
+    ttk.Label(top, text="Activate voice output channel").grid(column=0, row=8, sticky=tkinter.W, padx=5, pady=5)
+    ttk.Label(top, text="stop system's voice").grid(
+        column=1,
+        row=8,
+        sticky=tkinter.E,
+        padx=5,
+        pady=5
+    )
+    ttk.Label(top, text="Deactivate voice output channel").grid(column=0, row=9, sticky=tkinter.W, padx=5, pady=5)
+    ttk.Label(top, text="start system's voice").grid(
+        column=1,
+        row=9,
+        sticky=tkinter.E,
+        padx=5,
+        pady=5
+    )
+    ttk.Label(top, text="start spoofing process").grid(column=0, row=10, sticky=tkinter.W, padx=5, pady=5)
+    ttk.Label(top, text="to start the first level of fatcha").grid(
+        column=1,
+        row=10,
+        sticky=tkinter.E,
+        padx=5,
+        pady=5
+    )
+    ttk.Button(top, text='OK', width=10, command=top.destroy).grid(
+        column=1,
+        row=11,
+        pady=10
+    )
     top.transient(window)
     top.grab_set()
     window.wait_window(top)
 
 
 window = tkinter.Tk()
-window.resizable(False, False)
 window.style = ttk.Style()
 window.style.theme_use("clam")  # ('clam', 'alt', 'default', 'classic')
 window.geometry('1280x815')
@@ -360,7 +419,7 @@ window.config(menu=menu)
 fm = tkinter.Menu(menu, tearoff=0)
 menu.add_cascade(label="Settings", menu=fm)
 fm.add_command(label="Preferences")
-fm.add_command(label="Activate Voice", command=voice_channel)
+fm.add_command(label="Toggle Voice", command=voice_channel)
 
 hm = tkinter.Menu(menu, tearoff=0)
 menu.add_cascade(label="Help", menu=hm)

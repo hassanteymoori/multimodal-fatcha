@@ -35,12 +35,14 @@ class SpoofDetector:
             self.detected = True
             self.text = 'Possible spoof attach'
             self.n_consecutive_frames += 1
+            self.total = 0
             if self.n_consecutive_frames >= 25:
                 self.result = True
-        else:
+                self.n_consecutive_frames = 0
+        elif current_result == 0:
             self.n_consecutive_frames = 0
-            if current_result == 0:
-                self.total += 1
+            self.total += 1
+
         return
 
     def detect(self, frame):
