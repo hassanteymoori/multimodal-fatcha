@@ -8,7 +8,7 @@ from modules.face_mesh import FaceMesh
 from modules.gesture.keypoint_classifier import KeyPointClassifier
 from modules.anti_spoofing.challenge.response import ChallengeResponse
 from modules.anti_spoofing.emotion.emotion_detection import EmotionDetector
-from modules.anti_spoofing.fake_or_spoof.spoof_detection import SpoofDetector
+from modules.anti_spoofing.real_or_spoof.spoof_detection import SpoofDetector
 
 face_mesh = FaceMesh()
 hand_landmarks = HandLandmark()
