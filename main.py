@@ -9,6 +9,9 @@ from modules.gesture.keypoint_classifier import KeyPointClassifier
 from modules.anti_spoofing.challenge.response import ChallengeResponse
 from modules.anti_spoofing.emotion.emotion_detection import EmotionDetector
 from modules.anti_spoofing.real_or_spoof.spoof_detection import SpoofDetector
+from modules.voice_assistant import VoiceAssistant
+from tkinter import ttk
+import os
 
 face_mesh = FaceMesh()
 hand_landmarks = HandLandmark()
