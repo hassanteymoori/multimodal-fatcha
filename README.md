@@ -84,11 +84,29 @@ Having access to the hand landmarks was just the first step of our approach. We 
 <br />
 The first step, as mentioned above was to create a custom dataset of the landmarks. A module has implemented to accessed the camera and ask you to present a kind of gesture and start recording the landmarks to create the dataset.
 In summary, the Implementation of this challenge is divided into 3 different phases:
-** 1. Dataset Providing **
-** 2. Training a Model **
-** 3. Recognizing the gesture using the trained model **
+**1. Dataset Providing**
+**2. Training a Model**
+**3. Recognizing the gesture using the trained model**
 
 #### Dataset Generating
 First of all, the coordinates of hand landmarks extracted using the hand-made module of `key_point_logging.py` in the gesture folder. This function gets as many frames as you want per gesture shape and writes the coordinates of its points in a CSV file. (after applying a normalization) Therefore, our dataset is a CSV file containing handmarks coordinates and is ready for training.
 normalization of such data must be addressed as follows: <br />
 ![normal](./document/normal.png) <br />
+
+### Emotion recognition
+In order furthur stress the system performance emotion recognition has been considered in the system. The FER2013 dataset (Facial Expression Recognition 2013 Dataset) is used during the training.
+The data consists of 48x48 pixel grayscale images of faces. The faces have been automatically registered so that the face is more or less centered and occupies about the same amount of space in each image.
+The task is to categorize each face based on the emotion shown in the facial expression into one of seven categories (0=Angry, 1=Disgust, 2=Fear, 3=Happy, 4=Sad, 5=Surprise, 6=Neutral). The training set consists of 28,709 examples and the validation set consists of 7178 examples. The following image is a sample of each face's emotional mood.
+
+![emo](./document/emo.png) <br />
+
+
+
+## Results
+Run the project in real time to see the result! :)
+
+## Future developments
+- Better performance with higher framerate
+- Use other approaches like YOLO or SSD and Detectron implementation
+- Dynamic image processing
+- random emoji position
