@@ -63,3 +63,23 @@ Design choices here are the following:
 - Each question has a limited time to be completed, there is a timer for all the questions.
 - To successfully pass a specific question, you need to present the requested action for 25 continuous frames. (the `detected` feedback is shown to help the user the current state of detection)
 - To successfully pass the challenge, you need to pass all the questions correctly.
+
+
+### Head Pose
+MediaPipe Face Mesh is a solution that estimates 468 3D face landmarks in real-time even on mobile devices. It employs machine learning (ML) to infer the 3D facial surface, requiring only a single camera input without the need for a dedicated depth sensor. Utilizing lightweight model architectures together with GPU acceleration throughout the pipeline, the solution delivers real-time performance-critical for live experiences.
+
+To estimate the head pose a statistical function has been defined according to the 6 important landmarks that were extracted from the total landmarks in faceless.
+To deepen the concept check the documentation folder.
+
+### Gesture Recognition
+Another challenge will be generated based on the user gesture. Similar to the Head Pose, this kind of challenge has been implemented by the MediaPipe Hands library.
+The hand's landmarks model performs precise keypoint localization of 21 3D hand-knuckle coordinates inside the detected hand regions via regression, that is direct coordinate prediction. The model learns a consistent internal hand pose representation and is robust even to partially visible hands and self-occlusions. <br />
+
+In the following figures that are taken from the original resource of Mediapipe, you can see detailed information about the 21 landmark points and their ground truth annotations information.
+
+![lands](./document/lands.png) <br />
+![gestures](./document/gestures.png) <br />
+
+Having access to the hand landmarks was just the first step of our approach. We thought that the distance between the landmarks for each gesture can somehow represent a specific kind of pattern. All the landmarks while presenting those gestures have been gathered and trained in order to predict each of the gestures.
+<br />
+The first step, as mentioned above was to create a custom dataset of the landmarks. A module has implemented to accessed the camera and ask you to present a kind of gesture and start recording the landmarks to create the dataset.
