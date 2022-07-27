@@ -83,3 +83,12 @@ In the following figures that are taken from the original resource of Mediapipe,
 Having access to the hand landmarks was just the first step of our approach. We thought that the distance between the landmarks for each gesture can somehow represent a specific kind of pattern. All the landmarks while presenting those gestures have been gathered and trained in order to predict each of the gestures.
 <br />
 The first step, as mentioned above was to create a custom dataset of the landmarks. A module has implemented to accessed the camera and ask you to present a kind of gesture and start recording the landmarks to create the dataset.
+In summary, the Implementation of this challenge is divided into 3 different phases:
+** 1. Dataset Providing **
+** 2. Training a Model **
+** 3. Recognizing the gesture using the trained model **
+
+#### Dataset Generating
+First of all, the coordinates of hand landmarks extracted using the hand-made module of `key_point_logging.py` in the gesture folder. This function gets as many frames as you want per gesture shape and writes the coordinates of its points in a CSV file. (after applying a normalization) Therefore, our dataset is a CSV file containing handmarks coordinates and is ready for training.
+normalization of such data must be addressed as follows: <br />
+![normal](./document/normal.png) <br />
