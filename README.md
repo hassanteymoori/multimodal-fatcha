@@ -31,3 +31,12 @@ These channels have been taken into account to proceed with the communication. A
 To be able to use the microphone and listen to the speech that comes to the system, Microsoft Cognitive Services | Speech service has used in the project.
 * ![Microphone](./docs/mic.png) <br />
 To use the speechesdk you need to create a virtual resource on the cloud base Azure. Azure provides us with a specific credential to work with the resources. The credentials are stored in the config file in the project.  Speechsdk sends the captured voice to the virtual machine in the cloud, processes it, and returns the result. During the process of speech recognition by the virtual machine, the execution of the project in our device is stopped for a moment. In the following, you can see our virtual machine.
+* ![Microphone2](./docs/mic2.png) <br />
+
+The list of the command that can be performed by the microphone by the use of speechsdk is visualized in the figure below.
+* ![Microphone3](./docs/mic4.png) <br />
+---
+- Camera
+Camera is used to present different kinds of input to the systems. The frame of the faces and hands are taken by the camera and processed during the interaction. The confirmation command has been used as a complementarity message in order to complete the process.
+During the interaction using this device, facial expressions, gestural actions, and head pose detection have been considered for the application.
+* ![camera](./docs/camera.png) <br />
